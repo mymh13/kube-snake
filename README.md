@@ -6,8 +6,11 @@ The idea behind it: A project to build a Kubernetes-driven .NET-system
 Simple webpage, microservice, CI/CD
 See more detail in the "Initial outtake" section below
 
-### Architecture, layout of the system and development phase
-Can be found in /docs/architecture.md
+### Documentation in the /docs/ directory
+
+architecture.md - Architecture and deploy strategy
+initialouttake.md - Initial outtake and brainstorming behind the project
+phase_one.md - Development notes during phase one of the development
   
 ---
   
