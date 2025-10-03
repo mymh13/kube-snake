@@ -50,14 +50,10 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
+          cat << 'EOK' > ~/.ssh/deploy_key
+          ${{ secrets.SSH_PRIVATE_KEY }}
+          EOK
           chmod 600 ~/.ssh/deploy_key
-          
-          # Debug: check the key format
-          echo "Key file size: $(wc -c < ~/.ssh/deploy_key)"
-          echo "First line: $(head -1 ~/.ssh/deploy_key)"
-          
-          # Try to add it
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/deploy_key
 
