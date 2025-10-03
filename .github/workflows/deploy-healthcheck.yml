@@ -53,20 +53,21 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to K3s via SSH
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_REPO: ${{ github.repository }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             # Pull latest code
             cd ~/kube-snake
             git pull origin main
             
-            # Apply the deployment
-            kubectl apply -f ~/kube-snake/k3s/nginx-health-check-page.yaml
-            
-            # Restart deployment to pull new image
-            kubectl rollout restart deployment/nginx-healthcheck
+            # Update the deployment image to use the new SHA tag
+            kubectl set image deployment/nginx-healthcheck \
+              nginx=ghcr.io/${IMAGE_REPO}/healthcheck:${IMAGE_TAG}
             
             # Wait for rollout to complete
             kubectl rollout status deployment/nginx-healthcheck --timeout=60s
             
-            echo "Healthcheck deployed on $(hostname) at $(date)"
+            echo "Healthcheck deployed on \$(hostname) at \$(date)"
           EOF
