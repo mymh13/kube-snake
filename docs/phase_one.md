@@ -6,10 +6,10 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 ## Steps
 
 ### 1. K3s Local Setup (Docker Desktop)
-- [ ] Install/verify K3s in Docker Desktop
-- [ ] Test basic kubectl commands
-- [ ] Deploy simple nginx healthcheck pod
-- [ ] Verify pod is running and accessible
+- [x] Install/verify K3s in Docker Desktop
+- [x] Test basic kubectl commands
+- [x] Deploy simple nginx healthcheck pod
+- [x] Verify pod is running and accessible
 
 ### 2. Infrastructure Setup
 - [ ] Prepare Cloud VM environment
@@ -24,10 +24,14 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - [ ] Verify automated deployment works
 
 ## Current Status
-**Step 1.1**: Setting up K3s locally in Docker Desktop
+**Step 2.1**: Preparing Cloud VM for K3s installation
 
 ## Notes
 - Keep it minimal - nginx healthcheck only
 - Verify each step before moving forward
-- Document any issues encounteredlan
-1. 
+- Document any issues encountered
+
+## Completed
+- ✓ Local K3s cluster verified working
+- ✓ Basic nginx deployment and service created (`k3s/nginx-health-check-page.yaml`)
+- ✓ Internal cluster networking confirmed working 
