@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:alpine
+        image: ghcr.io/mymh13/kube-snake/healthcheck:latest
         ports:
         - containerPort: 80
 ---

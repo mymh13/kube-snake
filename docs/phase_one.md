@@ -17,16 +17,17 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - [x] Configure networking and firewall
 - [x] Deploy nginx healthcheck to remote cluster
 - [x] Configure Caddy reverse proxy
-- [ ] Verify DNS propagation and external access
+- [x] Verify DNS propagation and external access
 
 ### 3. CI/CD Pipeline
-- [ ] Create GitHub Actions workflow
-- [ ] Build and push container to GHCR
+- [x] Create GitHub Actions workflow
+- [x] Build and push container to GHCR
+- [x] Configure GitHub Secrets
 - [ ] Deploy to K3s cluster
 - [ ] Verify automated deployment works
 
 ## Current Status
-**Step 2.6**: Waiting for DNS propagation to complete
+**Step 3.4**: Ready to test CI/CD deployment
 
 ## Notes
 - Keep it minimal - nginx healthcheck only
@@ -48,5 +49,14 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - ✓ Service verified running (ClusterIP: 10.43.39.44:80)
 - ✓ Caddy reverse proxy configured for `kube-snake.mymh.dev`
 - ✓ DNS A record created at Loopia → 37.27.40.61
-- ⏳ Waiting for global DNS propagation (currently showing parking page)
-- ⏳ SSL certificate will auto-provision once DNS resolves 
+- ✓ DNS propagated successfully
+- ✓ SSL certificate auto-provisioned by Caddy
+- ✓ External access verified at https://kube-snake.mymh.dev
+
+### CI/CD Pipeline (Step 3)
+- ✓ Custom healthcheck Docker image created (`apps/healthcheck/`)
+- ✓ Dockerfile and index.html configured
+- ✓ GitHub Actions workflow created (`.github/workflows/deploy-healthcheck.yml`)
+- ✓ K3s deployment updated to use custom image from GHCR
+- ✓ GitHub Secrets configured (SSH_HOST, SSH_USER, SSH_PRIVATE_KEY)
+- ⏳ Ready to test automated deployment 
