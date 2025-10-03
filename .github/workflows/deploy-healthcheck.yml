@@ -52,6 +52,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
         run: |
+          sudo apt-get update && sudo apt-get install -y expect
           eval $(ssh-agent -s)
           expect -c "
             spawn ssh-add -
