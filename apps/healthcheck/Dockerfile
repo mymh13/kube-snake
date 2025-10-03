@@ -1,7 +1,11 @@
 FROM nginx:alpine
 
 # Copy custom HTML
-COPY index.html /usr/share/nginx/html/index.html
+FROM nginx:alpine
+
+# Copy the healthcheck page and styles
+COPY index.html /usr/share/nginx/html/
+COPY styles.css /usr/share/nginx/html/
 
 # Expose port 80
 EXPOSE 80

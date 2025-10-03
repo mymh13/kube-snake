@@ -1,38 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kube-Snake Health</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        h1 {
-            font-size: 3em;
-            margin: 0;
-        }
-
-        p {
-            font-size: 1.5em;
-        }
-
-        .status {
-            color: #4ade80;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <h1>🐍 Kube-Snake</h1>
-    <p>Page health status: <span class="status">HEALTHY</span></p>
-    <p>K3s cluster running on Hetzner.</p>
-    <p>Work in progress.</p>
+    <div class="container">
+        <h1>🐍 Kube-Snake</h1>
+        <p>Page health status: <span class="status">HEALTHY</span></p>
+        <p>
+            This page is served from a K3s cluster running on a cloud VM.
+            The pod contains an nginx:alpine container serving static HTML.
+            Deployment is automated via GitHub Actions CI/CD pipeline that builds a Docker image,
+            pushes to GitHub Container Registry (GHCR), and deploys to the cluster using kubectl.
+            Traffic is routed through Caddy reverse proxy with automatic SSL termination.
+        </p>
+        <p>Work in progress - microservices architecture under development.</p>
+    </div>
 </body>
 
 </html>

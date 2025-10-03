@@ -23,11 +23,13 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - [x] Create GitHub Actions workflow
 - [x] Build and push container to GHCR
 - [x] Configure GitHub Secrets
-- [ ] Deploy to K3s cluster
-- [ ] Verify automated deployment works
+- [x] Deploy to K3s cluster
+- [x] Verify automated deployment works
 
 ## Current Status
-**Step 3.4**: Ready to test CI/CD deployment
+**PHASE ONE COMPLETE!** ✅
+
+All infrastructure, K3s, and CI/CD are working end-to-end.
 
 ## Notes
 - Keep it minimal - nginx healthcheck only
@@ -59,4 +61,10 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - ✓ GitHub Actions workflow created (`.github/workflows/deploy-healthcheck.yml`)
 - ✓ K3s deployment updated to use custom image from GHCR
 - ✓ GitHub Secrets configured (SSH_HOST, SSH_USER, SSH_PRIVATE_KEY)
-- ⏳ Ready to test automated deployment 
+- ✓ Automated deployment tested and working!
+- ✓ Full CI/CD pipeline: code push → Docker build → GHCR push → K3s deployment
+
+## Lessons Learned
+- SSH keys must include BEGIN/END lines in GitHub Secrets
+- `webfactory/ssh-agent` works great when key format is correct
+- Test locally when possible to save GitHub Actions minutes 
