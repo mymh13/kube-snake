@@ -14,13 +14,15 @@
         <h1>🐍 Kube-Snake</h1>
         <p>Page health status: <span class="status">HEALTHY</span></p>
         <p>
-            This page is served from a K3s cluster running on a cloud VM.
-            The pod contains an nginx:alpine container serving static HTML.
-            Deployment is automated via GitHub Actions CI/CD pipeline that builds a Docker image,
-            pushes to GitHub Container Registry (GHCR), and deploys to the cluster using kubectl.
-            Traffic is routed through Caddy reverse proxy with automatic SSL termination.
+            This page is served from a K3s cluster on a cloud VM.
+            Deployment automated via GitHub Actions → GHCR → kubectl.
+            Traffic routed through Caddy reverse proxy with automatic SSL.
         </p>
-        <p>Work in progress - microservices architecture under development.</p>
+        <p>
+            <strong>Roadmap:</strong> Helm charts → ArgoCD (GitOps) → MongoDB (StatefulSet + PVC) →
+            .NET 9 backend API (K3s) → HTMX frontend (Azure Static Web App, free tier) →
+            horizontal scaling. Multi-cloud architecture: K3s for backend/data, Azure for static frontend.
+        </p>
     </div>
 </body>
 
