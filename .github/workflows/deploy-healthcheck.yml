@@ -51,6 +51,14 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: Debug SSH key received
+        run: |
+          echo "Secret length: ${#SSH_KEY}"
+          echo "First 50 chars: ${SSH_KEY:0:50}"
+          echo "Last 50 chars: ${SSH_KEY: -50}"
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to K3s via SSH
         run: |
