@@ -27,7 +27,7 @@ Set up K3s infrastructure and CI/CD pipeline with simple healthcheck deployment.
 - [x] Verify automated deployment works
 
 ## Current Status
-**PHASE ONE COMPLETE!** ✅
+**PHASE ONE COMPLETE!**
 
 All infrastructure, K3s, and CI/CD are working end-to-end.
 
