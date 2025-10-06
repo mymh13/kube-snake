@@ -1,0 +1,27 @@
+# Default values for healthcheck chart
+# This file contains configurable parameters that can be overridden
+
+# Container image configuration
+image:
+  repository: ghcr.io/mymh13/kube-snake/healthcheck
+  pullPolicy: Always
+  tag: "latest"
+# latest is the default for local testing, in the CI/CD deploy we will override this with the specific commit SHA
+
+# Number of pod replicas
+replicaCount: 2
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+# Resource limits (optional, commented out for now)
+# resources:
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+#   requests:
+#     cpu: 50m
+#     memory: 64Mi

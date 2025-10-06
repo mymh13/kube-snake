@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'apps/healthcheck/**'
-      - 'k3s/**'
+      - 'helm/charts/healthcheck/**'
       - '.github/workflows/deploy-healthcheck.yml'
 
 env:
@@ -52,22 +52,20 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to K3s via SSH
+      - name: Deploy to K3s via SSH with Helm
         env:
           IMAGE_TAG: ${{ github.sha }}
-          IMAGE_REPO: ${{ github.repository }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
-            # Pull latest code
+            # Pull latest code to get updated Helm chart
             cd ~/kube-snake
             git pull origin main
             
-            # Update the deployment image to use the new SHA tag
-            kubectl set image deployment/nginx-healthcheck \
-              nginx=ghcr.io/${IMAGE_REPO}/healthcheck:${IMAGE_TAG}
+            # Deploy using Helm (upgrade or install)
+            helm upgrade --install healthcheck ./helm/charts/healthcheck \
+              --set image.tag=${IMAGE_TAG} \
+              --wait \
+              --timeout=2m
             
-            # Wait for rollout to complete
-            kubectl rollout status deployment/nginx-healthcheck --timeout=60s
-            
-            echo "Healthcheck deployed on \$(hostname) at \$(date)"
+            echo "Healthcheck deployed via Helm on \$(hostname) at \$(date)"
           EOF
