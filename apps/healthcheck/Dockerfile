@@ -1,8 +1,5 @@
 FROM nginx:alpine
 
-# Copy custom HTML
-FROM nginx:alpine
-
 # Copy the healthcheck page and styles
 COPY index.html /usr/share/nginx/html/
 COPY styles.css /usr/share/nginx/html/

@@ -5,8 +5,8 @@
 image:
   repository: ghcr.io/mymh13/kube-snake/healthcheck
   pullPolicy: Always
-  tag: "be6b840815eaf601cdd57fd61fdfb72ba47f0521"
-# Default to latest; GitHub Actions will update this to specific commit SHA during CI
+  tag: "latest"
+# Uses 'latest' tag with pullPolicy: Always to ensure newest image is pulled
 
 # Number of pod replicas
 replicaCount: 2
