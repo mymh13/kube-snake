@@ -14,13 +14,15 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 ### Phase 2A: GitOps Foundation (Helm + ArgoCD)
 
 #### 2.1: Convert Healthcheck to Helm Chart
-- [ ] Create Helm chart structure (`charts/healthcheck/`)
-- [ ] Create `Chart.yaml` with metadata
-- [ ] Create `values.yaml` with configurable parameters
-- [ ] Template-ize deployment and service manifests
-- [ ] Test: Deploy via `helm install` (replace `kubectl apply`)
-- [ ] Verify: Healthcheck still works via Helm deployment
-- [ ] Learn: Helm templating, values override, chart structure
+- [x] Create Helm chart structure (`helm/charts/healthcheck/`)
+- [x] Create `Chart.yaml` with metadata
+- [x] Create `values.yaml` with configurable parameters (2 replicas)
+- [x] Template-ize deployment and service manifests
+- [x] Update GitHub Actions workflow to use `helm upgrade --install`
+- [x] Test: Deploy via Helm with SHA tag override
+- [x] Verify: Healthcheck working with 2 replicas via Helm deployment
+- [x] Learn: Helm templating, values override, chart structure
+- [x] Security: Fixed SSH key logging issue with `log-public-key: false`
 
 #### 2.2: Install ArgoCD in K3s
 - [ ] Deploy ArgoCD to K3s cluster
@@ -65,9 +67,9 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [ ] Learn: .NET + MongoDB integration, multi-app ArgoCD management
 
 ## Current Status
-**NOT STARTED**
+**PHASE 2.1 COMPLETE! ✅**
 
-Phase One complete - ready to begin GitOps implementation.
+Successfully converted healthcheck deployment to Helm chart with 2 replicas. CI/CD pipeline now uses Helm for deployments with SHA-based image tagging. Ready to install ArgoCD.
 
 ## Architecture After Phase 2
 
@@ -92,6 +94,17 @@ GitHub Repo (Source of Truth)
 - Keep .NET API simple - focus is on infrastructure, not features
 - MongoDB credentials managed via Kubernetes Secrets
 - Test each component independently before moving to next step
+
+## Completed
+### Helm Chart Implementation (2.1)
+- ✓ Helm chart created with Chart.yaml, values.yaml, and templates/
+- ✓ Deployment and Service templates use `.Chart.Name` and `.Values.*` for flexibility
+- ✓ GitHub Actions workflow updated to use `helm upgrade --install`
+- ✓ Workflow overrides image tag with commit SHA for reliable deployments
+- ✓ Successfully deployed with 2 replicas
+- ✓ Security fix: Added `log-public-key: false` to prevent SSH key exposure
+- ✓ Validated with `helm lint` and `helm template`
+- ✓ Old `k3s/nginx-health-check-page.yaml` approach replaced
 
 ## What We'll Learn
 - Helm chart creation and templating
