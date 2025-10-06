@@ -25,21 +25,22 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [x] Security: Fixed SSH key logging issue with `log-public-key: false`
 
 #### 2.2: Install ArgoCD in K3s
-- [ ] Deploy ArgoCD to K3s cluster
-- [ ] Access ArgoCD UI (port-forward or via Caddy subdomain)
-- [ ] Configure initial admin access
-- [ ] Connect ArgoCD to GitHub repository
-- [ ] Verify: ArgoCD dashboard accessible and repo connected
-- [ ] Learn: ArgoCD architecture, sync mechanisms, GitOps workflow
+- [x] Deploy ArgoCD to K3s cluster
+- [x] Access ArgoCD UI via Caddy subdomain (argocd.kube-snake.mymh.dev)
+- [x] Configure initial admin access
+- [x] Verify: ArgoCD dashboard accessible and repo connected
+- [x] Learn: ArgoCD architecture, polling mechanisms, GitOps workflow
+- [x] Security: Added security headers to Caddy for ArgoCD subdomain
 
 #### 2.3: ArgoCD-Managed Healthcheck
-- [ ] Create ArgoCD Application manifest for healthcheck
-- [ ] Point ArgoCD to healthcheck Helm chart in repo
-- [ ] Configure auto-sync policy
-- [ ] Test: Git push → ArgoCD detects change → auto-sync → K3s deploy
-- [ ] Update GitHub Actions: remove `kubectl` deploy step (CI only builds images)
-- [ ] Verify: Full GitOps flow working (git is source of truth)
-- [ ] Learn: ArgoCD sync, self-healing, git-based deployment
+- [x] Create ArgoCD Application manifest for healthcheck
+- [x] Point ArgoCD to healthcheck Helm chart in repo
+- [x] Configure auto-sync policy (prune: true, selfHeal: true)
+- [x] Test: Git push → ArgoCD detects change → auto-sync → K3s deploy
+- [x] Update GitHub Actions: removed deployment step (CI only builds images)
+- [x] Verify: Full GitOps flow working (git is source of truth)
+- [x] Test: Self-healing (manual scale down auto-restored to 2 replicas)
+- [x] Learn: ArgoCD sync, self-healing, git-based deployment, polling vs webhooks
 
 ### Phase 2B: MongoDB via GitOps
 
@@ -67,9 +68,14 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [ ] Learn: .NET + MongoDB integration, multi-app ArgoCD management
 
 ## Current Status
-**PHASE 2.1 COMPLETE! ✅**
+**PHASE 2A COMPLETE! ✅ (Helm + ArgoCD)**
 
-Successfully converted healthcheck deployment to Helm chart with 2 replicas. CI/CD pipeline now uses Helm for deployments with SHA-based image tagging. Ready to install ArgoCD.
+GitOps foundation is fully operational:
+- Helm charts managing deployments with configurable values
+- ArgoCD watching GitHub repo and auto-syncing changes
+- Self-healing enabled (manual changes reverted to Git state)
+- GitHub Actions only builds images, ArgoCD handles all deployments
+- Ready to add MongoDB as first stateful workload
 
 ## Architecture After Phase 2
 
@@ -105,6 +111,25 @@ GitHub Repo (Source of Truth)
 - ✓ Security fix: Added `log-public-key: false` to prevent SSH key exposure
 - ✓ Validated with `helm lint` and `helm template`
 - ✓ Old `k3s/nginx-health-check-page.yaml` approach replaced
+
+### ArgoCD Installation (2.2)
+- ✓ ArgoCD v3.19.0 installed in `argocd` namespace
+- ✓ Caddy reverse proxy configured for `argocd.kube-snake.mymh.dev`
+- ✓ DNS A record added and propagated
+- ✓ ArgoCD UI accessible with HTTPS and security headers
+- ✓ Initial admin credentials retrieved and secured
+- ✓ Learned: Caddy can't resolve `.svc.cluster.local` DNS (used ClusterIP instead)
+
+### GitOps Workflow Integration (2.3)
+- ✓ ArgoCD Application manifest created in `argocd/applications/healthcheck.yaml`
+- ✓ Application configured with automated sync policy (prune + selfHeal)
+- ✓ Connected to GitHub repo: `https://github.com/mymh13/kube-snake.git`
+- ✓ Targeting `helm/charts/healthcheck` on `main` branch
+- ✓ ArgoCD successfully synced and deployed healthcheck
+- ✓ Tested self-healing: manual scale down auto-restored to 2 replicas
+- ✓ GitHub Actions workflow simplified: removed deployment job, only builds images
+- ✓ Full separation achieved: CI (GitHub Actions) builds, CD (ArgoCD) deploys
+- ✓ Learned: ArgoCD polls Git every 3 minutes, no webhooks needed
 
 ## What We'll Learn
 - Helm chart creation and templating

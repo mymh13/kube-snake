@@ -1,11 +1,10 @@
-name: Build and Deploy Healthcheck
+name: Build Healthcheck Image
 
 on:
   push:
     branches: [ main ]
     paths:
       - 'apps/healthcheck/**'
-      - 'helm/charts/healthcheck/**'
       - '.github/workflows/deploy-healthcheck.yml'
 
 env:
@@ -23,14 +22,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry GCR
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image to GCR
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./apps/healthcheck
@@ -38,35 +37,9 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Add SSH key for Hetzner
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          log-public-key: false
-
-      - name: Deploy to K3s via SSH with Helm
-        env:
-          IMAGE_TAG: ${{ github.sha }}
+      
+      - name: Image built successfully
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
-            # Pull latest code to get updated Helm chart
-            cd ~/kube-snake
-            git pull origin main
-            
-            # Deploy using Helm (upgrade or install)
-            helm upgrade --install healthcheck ./helm/charts/healthcheck \
-              --set image.tag=${IMAGE_TAG} \
-              --wait \
-              --timeout=2m
-            
-            echo "Healthcheck deployed via Helm on \$(hostname) at \$(date)"
-          EOF
+          echo "✅ Docker image built and pushed to GHCR"
+          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          echo "🔄 ArgoCD will automatically sync the deployment from Git"

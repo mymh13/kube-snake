@@ -14,9 +14,9 @@
         <h1>🐍 Kube-Snake</h1>
         <p>Page health status: <span class="status">HEALTHY</span></p>
         <p>
-            This page is served from a K3s cluster on a cloud VM.
-            Deployment automated via GitHub Actions → GHCR → kubectl.
-            Traffic routed through Caddy reverse proxy with automatic SSL.
+            This page is served from a K3s cluster with 2 replicas.
+            Managed by ArgoCD (GitOps) using Helm charts.
+            CI: GitHub Actions builds images → GHCR. CD: ArgoCD syncs from Git → K3s.
         </p>
         <p>
             <strong>Roadmap:</strong> Helm charts → ArgoCD (GitOps) → MongoDB (StatefulSet + PVC) →
