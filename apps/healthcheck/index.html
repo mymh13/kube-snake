@@ -15,11 +15,12 @@
         <p>Page health status: <span class="status">HEALTHY</span></p>
         <p>
             This page is served from a K3s cluster with 2 replicas.
-            Managed by ArgoCD (GitOps) using Helm charts.
-            CI: GitHub Actions builds images → GHCR. CD: ArgoCD syncs from Git → K3s.
+            Managed by ArgoCD (GitOps) using Helm charts.<br>
+            CI: GitHub Actions builds images → GHCR.<br>
+            CD: ArgoCD syncs from Git → K3s.
         </p>
         <p>
-            <strong>Roadmap:</strong> Helm charts → ArgoCD (GitOps) → MongoDB (StatefulSet + PVC) →
+            <strong>Roadmap:</strong> MongoDB (StatefulSet + PVC) →
             .NET 9 backend API (K3s) → HTMX frontend (Azure Static Web App, free tier) →
             horizontal scaling. Multi-cloud architecture: K3s for backend/data, Azure for static frontend.
         </p>
