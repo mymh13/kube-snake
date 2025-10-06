@@ -15,7 +15,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -38,8 +38,21 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
       
+      - name: Update Helm values with new image tag
+        run: |
+          sed -i 's|tag: ".*"|tag: "${{ github.sha }}"|' helm/charts/healthcheck/values.yaml
+          
+      - name: Commit updated values.yaml
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add helm/charts/healthcheck/values.yaml
+          git diff --staged --quiet || git commit -m "CI: Update healthcheck image to ${{ github.sha }}"
+          git push
+      
       - name: Image built successfully
         run: |
-          echo "✅ Docker image built and pushed to GHCR"
-          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          echo "🔄 ArgoCD will automatically sync the deployment from Git"
+          echo "Docker image built and pushed to GHCR"
+          echo "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          echo "Helm values.yaml updated with new image tag"
+          echo "ArgoCD will automatically sync the deployment from Git"
