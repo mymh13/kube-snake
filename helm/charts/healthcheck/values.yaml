@@ -24,7 +24,7 @@ ingress:
   host: kube-snake.mymh.dev
   tlsSecretName: kube-snake-tls
   certManager:
-    clusterIssuer: letsencrypt-prod
+    clusterIssuer: letsencrypt-staging  # Changed to staging for testing
   annotations:
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
 
