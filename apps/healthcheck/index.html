@@ -22,30 +22,33 @@
             <strong>Security:</strong> Sealed Secrets, ClusterIP service isolation.
         </p>
 
-        <!-- Guestbook Section -->
+        <!-- Guestbook Section - Temporarily disabled until Ingress configured -->
         <hr>
         <h2>📝 Guestbook</h2>
+        <p><em>Guestbook integration in progress - requires Ingress configuration</em></p>
+        <!-- 
         <div id="guestbook-container">
-            <!-- Messages will load here via HTMX -->
-            <div id="messages-list" hx-get="http://guestbook-service/api/messages" hx-trigger="load"
-                hx-swap="innerHTML">
+            <div id="messages-list" 
+                 hx-get="/guestbook/api/messages" 
+                 hx-trigger="load"
+                 hx-swap="innerHTML">
                 <p>Loading messages...</p>
             </div>
 
-            <!-- Admin Section -->
             <div id="admin-section">
                 <h3>Admin</h3>
-                <form hx-post="http://guestbook-service/api/login" hx-target="#admin-section" hx-swap="outerHTML">
+                <form hx-post="/guestbook/api/login" 
+                      hx-target="#admin-section" 
+                      hx-swap="outerHTML">
                     <input type="text" name="username" placeholder="Username" required>
                     <input type="password" name="password" placeholder="Password" required>
                     <button type="submit">Login</button>
                 </form>
             </div>
         </div>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        -->
     </div>
-
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </body>
 
 </html>
