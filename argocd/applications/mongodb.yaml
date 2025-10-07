@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mongodb
+  namespace: argocd
+spec:
+  # The project this application belongs to
+  project: default
+  
+  # Source: Where is the Helm chart?
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/mongodb
+    
+  # Destination: Where to deploy?
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  
+  # Sync policy: How to keep in sync?
+  syncPolicy:
+    automated:
+      prune: true      # Delete resources when removed from Git
+      selfHeal: true   # Sync when cluster state differs from Git
+    syncOptions:
+      - CreateNamespace=true

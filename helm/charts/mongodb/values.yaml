@@ -1,0 +1,29 @@
+# MongoDB container image configuration
+image:
+  repository: mongo
+  pullPolicy: IfNotPresent
+  tag: "7.0"
+
+# StatefulSet configuration
+replicaCount: 1  # Single instance for now (can scale later)
+
+# Persistent storage configuration
+persistence:
+  enabled: true
+  storageClass: "local-path"  # K3s default storage class
+  size: 5Gi
+  accessMode: ReadWriteOnce
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 27017 # MongoDB default port
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi

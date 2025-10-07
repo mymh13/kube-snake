@@ -44,18 +44,27 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 
 ### Phase 2B: MongoDB via GitOps
 
-#### 2.4: MongoDB Helm Chart
-- [ ] Create Helm chart for MongoDB (`charts/mongodb/`)
-- [ ] Configure StatefulSet for MongoDB
-- [ ] Create PersistentVolumeClaim templates
-- [ ] Create Kubernetes Secret for credentials (in values)
-- [ ] Configure ClusterIP Service for internal access
-- [ ] Create ArgoCD Application for MongoDB
-- [ ] Deploy via ArgoCD sync
-- [ ] Verify: MongoDB pod running, PVC bound, ArgoCD synced
-- [ ] Learn: StatefulSets, persistent storage in K3s, secrets management
+#### 2.4: MongoDB Helm Chart with Sealed Secrets
+- [x] Create Helm chart for MongoDB (`helm/charts/mongodb/`)
+- [x] Configure StatefulSet for MongoDB
+- [x] Create PersistentVolumeClaim templates (5Gi storage)
+- [x] Install Sealed Secrets controller in K3s cluster
+- [x] Install `kubeseal` CLI tool locally
+- [x] Create encrypted SealedSecret for MongoDB credentials
+- [x] Configure headless ClusterIP Service for StatefulSet
+- [x] Create ArgoCD Application manifest for MongoDB
+- [x] Verify: Chart templates render correctly with encrypted secrets
+- [x] Learn: StatefulSets vs Deployments, persistent storage, Sealed Secrets encryption
+- [x] Security: Credentials encrypted and safe to commit to public repo
 
-#### 2.5: Test with Simple .NET API
+#### 2.5: Deploy MongoDB via ArgoCD
+- [ ] Apply ArgoCD Application manifest to cluster
+- [ ] Verify: MongoDB pod running, PVC bound, ArgoCD synced
+- [ ] Test: Connect to MongoDB from within cluster
+- [ ] Verify: Data persists across pod restarts
+- [ ] Learn: StatefulSet pod identity, volume attachment, ArgoCD management
+
+#### 2.6: Test with Simple .NET API
 - [ ] Create minimal .NET 9 API project
 - [ ] Add MongoDB.Driver NuGet package
 - [ ] Implement simple health endpoint
@@ -68,14 +77,15 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [ ] Learn: .NET + MongoDB integration, multi-app ArgoCD management
 
 ## Current Status
-**PHASE 2A COMPLETE! (Helm + ArgoCD)**
+**PHASE 2B IN PROGRESS: MongoDB Helm Chart Complete**
 
-GitOps foundation is fully operational:
-- Helm charts managing deployments with configurable values
-- ArgoCD watching GitHub repo and auto-syncing changes
-- Self-healing enabled (manual changes reverted to Git state)
-- GitHub Actions only builds images, ArgoCD handles all deployments
-- Ready to add MongoDB as first stateful workload
+MongoDB Helm chart created with production-ready security:
+- StatefulSet for stable pod identity and persistent storage
+- Sealed Secrets for encrypted credential management
+- 5Gi PersistentVolumeClaim using K3s local-path storage
+- Headless service for StatefulSet DNS resolution
+- ArgoCD Application manifest ready for deployment
+- Ready to deploy via ArgoCD sync
 
 ## Architecture After Phase 2
 
@@ -130,6 +140,37 @@ GitHub Repo (Source of Truth)
 - ✓ GitHub Actions workflow simplified: removed deployment job, only builds images
 - ✓ Full separation achieved: CI (GitHub Actions) builds, CD (ArgoCD) deploys
 - ✓ Learned: ArgoCD polls Git every 3 minutes, no webhooks needed
+
+### MongoDB Helm Chart with Sealed Secrets (2.4)
+- ✓ Created MongoDB Helm chart structure in `helm/charts/mongodb/`
+- ✓ Installed Bitnami Sealed Secrets controller (v0.24.5) in K3s cluster
+- ✓ Installed `kubeseal` CLI tool locally for encryption
+- ✓ Created SealedSecret with encrypted MongoDB credentials (username, password, database)
+- ✓ StatefulSet configured with:
+  - MongoDB 7.0 official image
+  - Environment variables pulled from SealedSecret
+  - Volume mount at `/data/db` for data persistence
+  - Resource limits: 500m CPU, 512Mi memory
+- ✓ PersistentVolumeClaim template configured:
+  - 5Gi storage using K3s `local-path` storage class
+  - ReadWriteOnce access mode
+  - Automatically created for each StatefulSet pod
+- ✓ Headless Service created (clusterIP: None) for StatefulSet pod DNS
+- ✓ ArgoCD Application manifest created in `argocd/applications/mongodb.yaml`
+- ✓ Validated chart with `helm lint` and `helm template`
+- ✓ Configured local kubectl to connect to K3s cluster from Windows machine
+- ✓ Learned: 
+  - Sealed Secrets encrypts with public key, only cluster's private key can decrypt
+  - StatefulSets provide stable network identity (mongodb-0, mongodb-1, etc.)
+  - VolumeClaimTemplates auto-create PVCs for each replica
+  - Headless services provide direct pod DNS resolution
+  - Encrypted secrets are cryptographically secure for public repos
+
+**Key Security Achievement:** 
+- Credentials encrypted before committing to Git
+- Only K3s cluster can decrypt them
+- Safe to store in public GitHub repository
+- No plaintext secrets in version control
 
 ## What We'll Learn
 - Helm chart creation and templating
