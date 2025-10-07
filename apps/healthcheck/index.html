@@ -14,17 +14,38 @@
         <h1>🐍 Kube-Snake</h1>
         <p>Page health status: <span class="status">HEALTHY</span></p>
         <p>
-            This page is served from a K3s cluster with 2 replicas.
-            Managed by ArgoCD (GitOps) using Helm charts.<br>
-            CI: GitHub Actions builds images → GHCR.<br>
-            CD: ArgoCD syncs from Git → K3s.
+            K3s cluster with GitOps (ArgoCD), 2 replicas, horizontal scaling.<br>
+            CI/CD: GitHub Actions → GHCR → ArgoCD → K3s deployment.
         </p>
         <p>
-            <strong>Roadmap:</strong> MongoDB (StatefulSet + PVC) →
-            .NET 9 backend API (K3s) → HTMX frontend (Azure Static Web App, free tier) → horizontal scaling. Multi-cloud
-            architecture: K3s for backend/data, Azure for static frontend.
+            <strong>Stack:</strong> MongoDB StatefulSet (5Gi persistent) → .NET 9 API → HTMX frontend.<br>
+            <strong>Security:</strong> Sealed Secrets, ClusterIP service isolation.
         </p>
+
+        <!-- Guestbook Section -->
+        <hr>
+        <h2>📝 Guestbook</h2>
+        <div id="guestbook-container">
+            <!-- Messages will load here via HTMX -->
+            <div id="messages-list" hx-get="http://guestbook-service/api/messages" hx-trigger="load"
+                hx-swap="innerHTML">
+                <p>Loading messages...</p>
+            </div>
+
+            <!-- Admin Section -->
+            <div id="admin-section">
+                <h3>Admin</h3>
+                <form hx-post="http://guestbook-service/api/login" hx-target="#admin-section" hx-swap="outerHTML">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </body>
 
 </html>

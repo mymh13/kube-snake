@@ -65,24 +65,24 @@ VM Storage (5Gi)
 - [ ] Learn: HTMX attributes, hypermedia-driven UI, server-side rendering
 
 ### Phase 3.3: Containerize & Deploy via GitOps
-- [ ] Create Dockerfile for .NET guestbook
-- [ ] Build multi-stage image (sdk → runtime)
-- [ ] Test Docker build locally
+- [x] Create Dockerfile for .NET guestbook
+- [x] Build multi-stage image (sdk → runtime)
+- [x] Test Docker build locally
 - [ ] Create GitHub Actions workflow (`build-guestbook.yaml`):
   - Trigger on `apps/guestbook/**` changes
   - Build image with commit SHA tag
   - Push to GHCR (`ghcr.io/mymh13/guestbook:latest` and `:sha`)
-- [ ] Create Helm chart (`helm/charts/guestbook/`)
+- [x] Create Helm chart (`helm/charts/guestbook/`)
   - Deployment with environment variables for MongoDB connection
   - Service (ClusterIP, port 80)
-  - ConfigMap for MongoDB connection string
-- [ ] Create ArgoCD Application (`argocd/applications/guestbook.yaml`)
+  - Secrets references for credentials
+- [x] Create ArgoCD Application (`argocd/applications/guestbook.yaml`)
 - [ ] Apply to cluster: `kubectl apply -f argocd/applications/guestbook.yaml`
 - [ ] Verify: ArgoCD syncs, pod running, can access guestbook
 - [ ] Learn: Multi-app GitOps, environment configuration, service discovery
 
 ### Phase 3.4: Integrate with Healthcheck Page
-- [ ] Update healthcheck `index.html`:
+- [x] Update healthcheck `index.html`:
   - Keep existing system info section (top)
   - Add guestbook section below with HTMX calls to `http://guestbook-service/api/*`
 - [ ] Test: Healthcheck page shows system info + guestbook
@@ -92,8 +92,8 @@ VM Storage (5Gi)
 - [ ] Learn: K8s service discovery, HTML composition, inter-pod communication
 
 ## Current Status
-**PHASE 3.1: COMPLETED**  
-**PHASE 3.2: READY TO START**
+**PHASE 3.3: IN PROGRESS** - Helm chart created, awaiting GitHub Actions workflow
+**PHASE 3.4: HTMX integration added to healthcheck** - awaiting cluster deployment to test
 
 MongoDB integration working locally via port-forward. Ready to build HTMX frontend.
 
@@ -216,4 +216,4 @@ MongoDB integration working locally via port-forward. Ready to build HTMX fronte
 During local development testing, we encountered authentication failures where `mongosh` could successfully authenticate to MongoDB using credentials `user:password`, but the .NET MongoDB.Driver consistently failed with `MongoAuthenticationException: Unable to authenticate using sasl protocol mechanism SCRAM-SHA-1`. Initially, we suspected connection string parsing issues, URL encoding problems, or SCRAM mechanism mismatches between the MongoDB server and the .NET driver. After extensive troubleshooting including creating multiple test users, trying different authentication mechanisms (SCRAM-SHA-1 vs SCRAM-SHA-256), and using `MongoClientSettings` instead of connection strings, the root cause was discovered: MongoDB's default port 27017 was already bound locally by either a local MongoDB instance or a stale `kubectl port-forward` process.
 
 ### The Solution: Alternate Port Binding
-The fix was to use an alternate local port for the port-forward tunnel: `kubectl port-forward svc/mongodb-service 27018:27017 -n default`. This ensured the tunnel actually forwarded traffic to the K3s MongoDB instance instead of routing to the conflicting local process. The .NET application's `.env` file was updated to use `mongodb://user:password@localhost:27018/?authSource=admin` for local development, while production deployments in the cluster use `mongodb://user:password@mongodb-service:27017/?authSource=admin` for direct service-to-service communication. Key takeaways: always verify `kubectl port-forward` shows `Forwarding from 127.0.0.1:XXXX` on startup, check for port conflicts using `netstat -ano | findstr :27017`, use non-standard ports for local development to avoid conflicts, and remember that authentication errors can sometimes indicate connectivity issues rather than credential problems.
+The fix was to use an alternate local port for the port-forward tunnel: `kubectl port-forward svc/mongodb-service 27018:27017 -n default`. This ensured the tunnel actually forwarded traffic to the K3s MongoDB instance instead of routing to the conflicting local process. The .NET application's `.env` file was updated to use `mongodb://user:password@localhost:27018/?authSource=admin` for local development, while production deployments in the cluster use `mongodb://user:password@mongodb-service:27017/?authSource=admin` for direct service-to-service communication. Key takeaways: always verify `kubectl port-forward` shows `Forwarding from 127.0.0.1:XXXX` on

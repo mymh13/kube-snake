@@ -1,0 +1,26 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/YOUR_GITHUB_USERNAME/kube-snake-guestbook
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+mongodb:
+  connectionStringSecret: guestbook-mongodb-credentials
+  database: snake_game
+
+admin:
+  credentialsSecret: guestbook-admin-credentials
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
