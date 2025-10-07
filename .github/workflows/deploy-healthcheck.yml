@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/healthcheck
+  IMAGE_NAME: ${{ github.repository_owner }}/kube-snake-healthcheck
 
 jobs:
   build-and-push:
