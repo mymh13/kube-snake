@@ -6,12 +6,12 @@ public static class EndpointExtensions
 {
     public static WebApplication MapGuestbookEndpoints(this WebApplication app)
     {
-        // Enable sessions middleware
+        // Add session middleware
         app.UseSession();
 
         // Map endpoint groups
-        AuthEndpoints.MapAuthEndpoints(app);
-        MessageEndpoints.MapMessageEndpoints(app);
+        app.MapMessageEndpoints();
+        app.MapAuthEndpoints();
 
         return app;
     }

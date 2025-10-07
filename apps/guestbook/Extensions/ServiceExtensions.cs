@@ -6,16 +6,16 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddGuestbookServices(this IServiceCollection services)
     {
-        // Register MongoDB service
         services.AddSingleton<MongoDbService>();
 
-        // Add session support for admin authentication
+        // Session support for admin authentication
         services.AddDistributedMemoryCache();
         services.AddSession(options =>
         {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
-            options.IdleTimeout = TimeSpan.FromHours(1);
+            options.Cookie.Path = "/guestbook";
         });
 
         return services;

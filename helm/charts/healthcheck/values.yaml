@@ -3,7 +3,7 @@
 
 # Container image configuration
 image:
-  repository: ghcr.io/mymh13/kube-snake/healthcheck
+  repository: ghcr.io/mymh13/kube-snake-healthcheck
   pullPolicy: Always
   tag: "latest"
 # Uses 'latest' tag with pullPolicy: Always to ensure newest image is pulled
@@ -13,15 +13,25 @@ replicaCount: 2
 
 # Service configuration
 service:
+  name: healthcheck-service
   type: ClusterIP
   port: 80
   targetPort: 80
 
-# Resource limits (optional, commented out for now)
-# resources:
-#   limits:
-#     cpu: 100m
-#     memory: 128Mi
-#   requests:
-#     cpu: 50m
-#     memory: 64Mi
+ingress:
+  enabled: true
+  className: traefik
+  host: kube-snake.mymh.dev
+  tlsSecretName: kube-snake-tls
+  certManager:
+    clusterIssuer: letsencrypt-prod
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
