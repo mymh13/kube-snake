@@ -58,11 +58,11 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [x] Security: Credentials encrypted and safe to commit to public repo
 
 #### 2.5: Deploy MongoDB via ArgoCD
-- [ ] Apply ArgoCD Application manifest to cluster
-- [ ] Verify: MongoDB pod running, PVC bound, ArgoCD synced
-- [ ] Test: Connect to MongoDB from within cluster
-- [ ] Verify: Data persists across pod restarts
-- [ ] Learn: StatefulSet pod identity, volume attachment, ArgoCD management
+- [x] Apply ArgoCD Application manifest to cluster
+- [x] Verify: MongoDB pod running, PVC bound, ArgoCD synced
+- [x] Test: Connect to MongoDB from within cluster
+- [x] Verify: Data persists across pod restarts
+- [x] Learn: StatefulSet pod identity, volume attachment, ArgoCD management
 
 #### 2.6: Test with Simple .NET API
 - [ ] Create minimal .NET 9 API project
@@ -77,15 +77,16 @@ Implement Helm and ArgoCD for GitOps-based deployments, then add MongoDB as the 
 - [ ] Learn: .NET + MongoDB integration, multi-app ArgoCD management
 
 ## Current Status
-**PHASE 2B IN PROGRESS: MongoDB Helm Chart Complete**
+**PHASE 2B IN PROGRESS: MongoDB Deployed via ArgoCD**
 
-MongoDB Helm chart created with production-ready security:
-- StatefulSet for stable pod identity and persistent storage
-- Sealed Secrets for encrypted credential management
-- 5Gi PersistentVolumeClaim using K3s local-path storage
-- Headless service for StatefulSet DNS resolution
-- ArgoCD Application manifest ready for deployment
-- Ready to deploy via ArgoCD sync
+MongoDB successfully deployed and running:
+- Pod `mongodb-0` running with 1/1 ready status
+- PersistentVolumeClaim `mongodb-data-mongodb-0` bound with 5Gi storage
+- ArgoCD Application showing Healthy & Synced status
+- All components green in ArgoCD UI (StatefulSet, Service, Secret, PVC)
+- Ready for .NET API integration testing
+
+Next: Create simple .NET API to test MongoDB connectivity and CRUD operations
 
 ## Architecture After Phase 2
 
@@ -171,6 +172,34 @@ GitHub Repo (Source of Truth)
 - Only K3s cluster can decrypt them
 - Safe to store in public GitHub repository
 - No plaintext secrets in version control
+
+### MongoDB Deployment via ArgoCD (2.5)
+- ✓ Applied ArgoCD Application manifest to K3s cluster
+- ✓ ArgoCD detected and synced MongoDB Helm chart from Git
+- ✓ Sealed Secrets controller decrypted credentials automatically
+- ✓ StatefulSet created pod `mongodb-0` successfully
+- ✓ PersistentVolumeClaim `mongodb-data-mongodb-0` bound to 5Gi storage volume
+- ✓ Headless Service `mongodb-service` providing DNS resolution
+- ✓ ArgoCD UI showing all resources as Healthy & Synced:
+  - StatefulSet: `mongodb` (green)
+  - Pod: `mongodb-0` (running, 1/1)
+  - Service: `mongodb-service` (healthy)
+  - SealedSecret: `mongodb-credentials` (created)
+  - Secret: `mongodb-credentials` (decrypted)
+  - PVC: `mongodb-data-mongodb-0` (bound)
+- ✓ Verified: Pod running for 3+ minutes without restarts
+- ✓ Learned:
+  - ArgoCD Application manifests trigger immediate deployment
+  - StatefulSet pods get stable identity (mongodb-0)
+  - PVCs automatically created from volumeClaimTemplates
+  - Sealed Secrets controller works seamlessly with ArgoCD sync
+  - GitOps deployment complete in seconds after `kubectl apply`
+
+**Key Achievement:**
+- Full GitOps workflow operational for stateful workloads
+- MongoDB deployed entirely through Git → ArgoCD → K3s
+- No manual kubectl commands for deployment (only for ArgoCD app registration)
+- Persistent storage working, data will survive pod restarts
 
 ## What We'll Learn
 - Helm chart creation and templating
