@@ -6,16 +6,12 @@ image:
   tag: "latest"
 
 service:
+  name: guestbook-service
   type: ClusterIP
   port: 80
-  targetPort: 8080
 
-mongodb:
-  connectionStringSecret: guestbook-mongodb-credentials
-  database: snake_game
-
-admin:
-  credentialsSecret: guestbook-admin-credentials
+ingress:
+  enabled: false  # Using healthcheck's ingress for routing
 
 resources:
   limits:
@@ -24,3 +20,6 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+
+env:
+  MONGODB_CONNECTION_STRING: "mongodb://user:password@mongodb-service:27017/?authSource=admin"

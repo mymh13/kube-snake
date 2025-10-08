@@ -20,13 +20,13 @@ service:
 
 ingress:
   enabled: true
-  className: traefik
+  className: nginx  # Changed from traefik to nginx
   host: kube-snake.mymh.dev
   tlsSecretName: kube-snake-tls
   certManager:
-    clusterIssuer: letsencrypt-staging  # Changed to staging for testing
+    clusterIssuer: letsencrypt-staging
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 
 resources:
   limits:
