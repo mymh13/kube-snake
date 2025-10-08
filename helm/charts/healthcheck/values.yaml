@@ -10,7 +10,7 @@ image:
 
 # Number of pod replicas
 replicaCount: 2
-https://chatgpt.com/
+
 # Service configuration
 service:
   name: healthcheck-service

@@ -25,4 +25,5 @@ env:
   MONGODB_CONNECTION_STRING: "mongodb://user:password@mongodb-service:27017/?authSource=admin"
 
 mongodb:
-  connectionStringSecret: ""   # Or set to your actual secret name
+  connectionStringSecret: ""   # Use Sealed Secrets if you want the pass in here
+  database: "snake_game"        # Or your actual database name
