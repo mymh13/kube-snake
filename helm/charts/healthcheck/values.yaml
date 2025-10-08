@@ -10,7 +10,7 @@ image:
 
 # Number of pod replicas
 replicaCount: 2
-
+https://chatgpt.com/
 # Service configuration
 service:
   name: healthcheck-service
@@ -24,10 +24,9 @@ ingress:
   host: kube-snake.mymh.dev
   tlsSecretName: kube-snake-tls
   certManager:
-    clusterIssuer: letsencrypt-staging
+    clusterIssuer: letsencrypt-prod
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
-
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 resources:
   limits:
     cpu: 100m

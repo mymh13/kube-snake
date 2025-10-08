@@ -23,3 +23,6 @@ resources:
 
 env:
   MONGODB_CONNECTION_STRING: "mongodb://user:password@mongodb-service:27017/?authSource=admin"
+
+mongodb:
+  connectionStringSecret: ""   # Or set to your actual secret name
