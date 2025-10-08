@@ -21,39 +21,30 @@ spec:
         ports:
         - containerPort: 8080
           name: http
+          protocol: TCP
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
-        - name: MONGODB_ROOT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.mongodb.connectionStringSecret }}
-              key: mongodb-root-username
-        - name: MONGODB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.mongodb.connectionStringSecret }}
-              key: mongodb-root-password
-        - name: MONGODB_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.mongodb.connectionStringSecret }}
-              key: mongodb-database
         - name: MONGODB_CONNECTION_STRING
-          value: "mongodb://$(MONGODB_ROOT_USERNAME):$(MONGODB_ROOT_PASSWORD)@mongodb-service:27017/$(MONGODB_DATABASE)?authSource=admin"
+          valueFrom:
+            secretKeyRef:
+              name: guestbook-mongodb-credentials
+              key: connection-string
+        - name: MONGODB_DATABASE
+          value: snake_game
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         livenessProbe:
           httpGet:
-            path: /guestbook/api/messages
+            path: /api/messages
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 30
-          timeoutSeconds: 5
+          timeoutSeconds: 1
         readinessProbe:
           httpGet:
-            path: /guestbook/api/messages
+            path: /api/messages
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 10
-          timeoutSeconds: 5
+          timeoutSeconds: 1
