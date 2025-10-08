@@ -19,7 +19,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: http
         env:
         - name: ASPNETCORE_ENVIRONMENT
@@ -46,12 +46,12 @@ spec:
         livenessProbe:
           httpGet:
             path: /api/messages
-            port: 80
+            port: 8080
           initialDelaySeconds: 10
           periodSeconds: 30
         readinessProbe:
           httpGet:
             path: /api/messages
-            port: 80
+            port: 8080
           initialDelaySeconds: 5
           periodSeconds: 10
