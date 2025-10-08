@@ -31,16 +31,6 @@ spec:
               key: connection-string
         - name: MONGODB_DATABASE
           value: {{ .Values.mongodb.database }}
-        # - name: ADMIN_USERNAME
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: {{ .Values.admin.credentialsSecret }}
-        #       key: username
-        # - name: ADMIN_PASSWORD
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: {{ .Values.admin.credentialsSecret }}
-        #       key: password
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         livenessProbe:
