@@ -15,8 +15,6 @@ out/
 *.user
 *.userosscache
 *.sln.docstates
-healthy.yaml
-unhealthy.yaml
 
 # Visual Studio cache/options
 .vs/
