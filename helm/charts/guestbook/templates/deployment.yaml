@@ -46,14 +46,14 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             httpGet:
-              path: /api/messages
+              path: guestbook/api/messages
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 1
           readinessProbe:
             httpGet:
-              path: /api/messages
+              path: guestbook/api/messages
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
