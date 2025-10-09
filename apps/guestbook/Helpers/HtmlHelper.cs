@@ -20,11 +20,11 @@ public static class HtmlHelper
         return @"
             <div id='admin-section'>
                 <h3>Admin Panel</h3>
-                <form hx-post='/api/messages' hx-target='#messages-list' hx-swap='innerHTML'>
+                <form hx-post='/guestbook/api/messages' hx-target='#messages-list' hx-swap='innerHTML'>
                     <textarea name='text' maxlength='200' placeholder='Enter message...' required></textarea><br>
                     <button type='submit'>Post Message</button>
                 </form>
-                <button hx-post='/api/logout' hx-target='#admin-section' hx-swap='outerHTML'>Logout</button>
+                <button hx-post='guestbook/api/logout' hx-target='#admin-section' hx-swap='outerHTML'>Logout</button>
             </div>";
     }
 
