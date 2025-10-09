@@ -32,6 +32,16 @@ spec:
                 key: connection-string
           - name: MONGODB_DATABASE
             value: snake_game
+          - name: ADMIN_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: guestbook-admin-credentials
+                key: username
+          - name: ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: guestbook-admin-credentials
+                key: password
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
