@@ -19,6 +19,9 @@ var app = builder.Build();
 // Handle /guestbook path prefix (for Ingress routing)
 app.UsePathBase("/guestbook");
 
+// Session middleware (should be before endpoints)
+app.UseSession();
+
 // Map endpoints using extension method
 app.MapGuestbookEndpoints();
 
