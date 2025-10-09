@@ -15,36 +15,43 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       containers:
-      - name: guestbook
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        env:
-        - name: ASPNETCORE_ENVIRONMENT
-          value: "Production"
-        - name: MONGODB_CONNECTION_STRING
-          valueFrom:
-            secretKeyRef:
-              name: guestbook-mongodb-credentials
-              key: connection-string
-        - name: MONGODB_DATABASE
-          value: snake_game
-        resources:
-          {{- toYaml .Values.resources | nindent 12 }}
-        livenessProbe:
-          httpGet:
-            path: /api/messages
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          timeoutSeconds: 1
-        readinessProbe:
-          httpGet:
-            path: /api/messages
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 1
+        - name: guestbook
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Production"
+          - name: MONGODB_CONNECTION_STRING
+            valueFrom:
+              secretKeyRef:
+                name: guestbook-mongodb-credentials
+                key: connection-string
+          - name: MONGODB_DATABASE
+            value: snake_game
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/messages
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /api/messages
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: dataprotection-keys
+              mountPath: /root/.aspnet/DataProtection-Keys
+      volumes:
+        - name: dataprotection-keys
+          persistentVolumeClaim:
+            claimName: guestbook-datakeys-pvc
