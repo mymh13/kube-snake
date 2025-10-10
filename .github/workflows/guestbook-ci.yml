@@ -52,7 +52,7 @@ jobs:
 
     - name: Update Helm values.yaml with new image tag
       run: |
-        SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        SHA="main-$(echo "${{ github.sha }}" | cut -c1-7)"
         sed -i "s/tag: \".*\"/tag: \"$SHA\"/" helm/charts/guestbook/values.yaml
         git config --global user.email "ci-bot@example.com"
         git config --global user.name "CI Bot"
