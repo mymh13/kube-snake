@@ -16,6 +16,7 @@ public static class AuthEndpoints
             if (username == adminUsername && password == adminPassword)
             {
                 context.Session.SetString("IsAdmin", "true");
+                context.Session.SetString("Username", username);
                 return Results.Content(HtmlHelper.RenderAdminPanel(), "text/html");
             }
 

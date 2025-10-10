@@ -36,7 +36,7 @@ public static class MessageEndpoints
             var message = new Message
             {
                 Text = text,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 CreatedBy = context.Session.GetString("Username") ?? "admin"
             };
 

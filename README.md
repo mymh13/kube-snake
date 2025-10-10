@@ -13,8 +13,8 @@ phase_three.md - documentation of phase three
   
 ### Current checklist:
   
-1. Replace AddDistributedMemoryCache with Redis distributed cache - DONE
-2. After that we can fix the erranous log out/log in problem behaviour
-3. Replace "latest" with SHA-tag - DONE
+1. - DONE -
+2. - DONE -
+3. - DONE -
 4. Then we need to fix the time and date and show the username (not the role) of the person who posts in the guestbook
-5. At this point we add the admin tool to delete posts
+5. - DONE -

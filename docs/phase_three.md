@@ -42,7 +42,7 @@ VM Storage (5Gi)
   - `GET /guestbook/api/messages` - Get last 10 messages as HTML partial (public)
   - `POST /guestbook/api/login` - Admin login (returns session cookie + HTML swap)
   - `POST /guestbook/api/messages` - Create message (admin only, returns updated list)
-  - `DELETE /guestbook/api/messages/{id}` - Delete message (admin only, returns updated list)
+  - `POST /guestbook/api/messages/delete` - Delete selected messages (admin only, returns updated list)
   - `POST /guestbook/api/logout` - Clear session
 - [x] Implement cookie-based authentication
 - [x] Add admin credentials from environment variables (via SealedSecret)
@@ -58,7 +58,7 @@ VM Storage (5Gi)
   - `hx-get="/guestbook/api/messages"` - Load messages into `#messages-list`
   - `hx-post="/guestbook/api/login"` - Submit login, swap to admin panel
   - `hx-post="/guestbook/api/messages"` - Post new message, refresh list
-  - `hx-delete="/guestbook/api/messages/{id}"` - Delete message, refresh list
+  - `hx-post="/guestbook/api/messages/delete"` - Delete selected messages, refresh list
 - [x] Add minimal CSS styling (keep it simple, professional)
 - [x] No JavaScript required (pure HTMX + HTML)
 - [x] Test: All interactions work without page reloads
@@ -101,10 +101,22 @@ VM Storage (5Gi)
 ### Phase 3.5: Automated Image Rollout
 - [x] Update GitHub Actions workflow to tag images with commit SHA
 - [x] Add workflow step to automatically update `helm/charts/guestbook/values.yaml` with new tag
-- [x] Configure Git credentials for CI Bot to commit and push changes
+- [x] Configure Personal Access Token (PAT) for CI Bot to commit and push changes
+- [x] Fix Git push authentication to use PAT in remote URL
 - [x] Test: Git push → image build → values.yaml update → ArgoCD sync → K3s deploy
 - [x] Verify: No manual `kubectl rollout restart` needed
 - [x] Verify: ArgoCD detects image tag changes and updates pods automatically
+
+### Phase 3.6: Admin Message Management
+- [x] Add bulk delete functionality for admin users
+- [x] Implement checkboxes next to each message (disabled for public users, enabled for admins)
+- [x] Wrap checkboxes in delete form for proper form submission
+- [x] Add "Delete Selected" button in admin panel
+- [x] Create `POST /guestbook/api/messages/delete` endpoint for bulk deletion
+- [x] Update `RenderMessages` to conditionally render checkboxes based on admin status
+- [x] Increase textarea size for better UX (400px width, resizable)
+- [x] Test: Admin can select and delete multiple messages at once
+- [x] Verify: Public users see disabled checkboxes (visual consistency)
 
 ## Current Status
 **PHASE 3: COMPLETE**
@@ -115,10 +127,11 @@ VM Storage (5Gi)
 - Full GitOps workflow with automated image tagging
 - Session persistence working with Redis across multiple replicas
 - Admin authentication secured with SealedSecrets
-- All HTMX interactions working reliably
+- All HTMX interactions working reliably (login, post, delete, logout)
+- Bulk message deletion for admins
 - Public access at `https://kube-snake.mymh.dev/`
 
-**Ready for Phase 4: Additional Features**
+**Ready for Phase 4: Snake Game**
 
 ## Tech Stack
 - **Backend:** .NET 9 Minimal API
@@ -152,7 +165,7 @@ VM Storage (5Gi)
 | GET | `/guestbook/api/messages` | Public | HTML | Last 10 messages as HTML list |
 | POST | `/guestbook/api/login` | Public | HTML | Admin panel HTML (on success) |
 | POST | `/guestbook/api/messages` | Admin | HTML | Updated message list |
-| DELETE | `/guestbook/api/messages/{id}` | Admin | HTML | Updated message list |
+| POST | `/guestbook/api/messages/delete` | Admin | HTML | Updated message list after bulk delete |
 | POST | `/guestbook/api/logout` | Admin | HTML | Login form HTML |
 
 ## HTMX Interactions
@@ -179,10 +192,23 @@ VM Storage (5Gi)
   <form hx-post="/guestbook/api/messages" 
         hx-target="#messages-list" 
         hx-swap="innerHTML">
-    <textarea name="text" maxlength="200"></textarea>
+    <textarea name="text" maxlength="200" style="width: 400px; height: 80px; resize: both;"></textarea>
     <button>Post</button>
   </form>
 </div>
+
+<!-- Delete form (wraps message list for admins) -->
+<form hx-post="/guestbook/api/messages/delete" 
+      hx-target="#messages-list" 
+      hx-swap="innerHTML">
+  <ul>
+    <li>
+      <input type="checkbox" name="messageIds" value="{id}">
+      <strong>{username}</strong> ({date}): {text}
+    </li>
+  </ul>
+  <button type="submit">Delete Selected</button>
+</form>
 ```
 
 ## Security Implementation
@@ -192,12 +218,13 @@ VM Storage (5Gi)
 - Input validation: max message length 200 chars
 - No public write access without authentication
 - Redis for session storage (no auth for in-cluster communication)
+- Delete functionality restricted to authenticated admins only
 
 ## Success Criteria
 - [x] .NET API connects to MongoDB successfully
 - [x] Admin can login with credentials from SealedSecret
 - [x] Admin can post messages (stored in MongoDB)
-- [x] Admin can delete messages
+- [x] Admin can delete multiple messages at once
 - [x] Public users can view messages (read-only)
 - [x] Messages persist across pod restarts
 - [x] All interactions work via HTMX (no page reloads)
@@ -214,6 +241,7 @@ VM Storage (5Gi)
 - ✓ MongoDbService implemented with environment-based configuration
 - ✓ Message model created with CRUD endpoints
 - ✓ Authentication endpoints (login/logout) implemented
+- ✓ Bulk delete endpoint implemented
 - ✓ Local testing successful via port-forward (port 27018 to avoid conflicts)
 - ✓ SealedSecret created for admin credentials (gitignored plaintext)
 
@@ -222,6 +250,7 @@ VM Storage (5Gi)
 - ✓ HTMX interactions implemented for all endpoints
 - ✓ Minimal CSS styling applied
 - ✓ No JavaScript required (pure HTMX + HTML)
+- ✓ Checkboxes added for message selection (admin-only enabled)
 
 ### Containerization & GitOps Deployment (3.3)
 - ✓ Dockerfile created with multi-stage build
@@ -245,10 +274,21 @@ VM Storage (5Gi)
 ### Automated Image Rollout (3.5)
 - ✓ GitHub Actions workflow updated to tag images with commit SHA
 - ✓ Workflow step added to update `helm/charts/guestbook/values.yaml`
-- ✓ Git credentials configured for CI Bot
+- ✓ Personal Access Token (PAT) configured for CI Bot authentication
+- ✓ Git push URL updated to use PAT for write access
 - ✓ Automated commit and push of updated values file
 - ✓ ArgoCD detects changes and triggers sync automatically
 - ✓ Manual `kubectl rollout restart` no longer needed
+
+### Admin Message Management (3.6)
+- ✓ Bulk delete functionality implemented
+- ✓ Checkboxes added next to each message
+- ✓ Public users see disabled checkboxes (visual consistency)
+- ✓ Admin users can select multiple messages
+- ✓ Delete form wraps message list for proper form submission
+- ✓ "Delete Selected" button added
+- ✓ `POST /guestbook/api/messages/delete` endpoint created
+- ✓ Textarea size increased for better UX (400px width, resizable)
 
 ## Notes
 - Keep guestbook simple and focused - it's a component, not the main feature
@@ -258,6 +298,7 @@ VM Storage (5Gi)
 - Guestbook serves as backup deliverable if Snake game isn't finished
 - Redis distributed cache is essential for session persistence with multiple replicas
 - Automated image tagging ensures seamless GitOps deployments without manual intervention
+- Bulk delete requires checkboxes to be inside form element for proper value submission
 
 ## Key Learnings
 - Port-forward conflicts can cause silent auth failures (use alternate ports)
@@ -268,3 +309,6 @@ VM Storage (5Gi)
 - Image tag in `values.yaml` must match registry tag exactly
 - ArgoCD syncs when Git manifests change, enabling automated rollouts
 - SHA-based tagging allows precise version control and rollback
+- GitHub Actions requires PAT with write permissions to push commits back to repository
+- Form elements must wrap input fields for values to be submitted correctly
+- HTMX `hx-target` and `hx-swap` enable partial page updates without JavaScript

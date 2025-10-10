@@ -54,7 +54,8 @@ public static class HtmlHelper
             <div id='admin-section'>
                 <h3>Admin Panel</h3>
                 <form hx-post='/guestbook/api/messages' hx-target='#messages-list' hx-swap='innerHTML'>
-                    <textarea name='text' placeholder='Your message' maxlength='200' required></textarea><br>
+                    <textarea name='text' placeholder='Your message' maxlength='200' required 
+                          style='width: 400px; height: 80px; resize: both;'></textarea><br>
                     <button type='submit'>Post Message</button>
                 </form>
                 <form hx-post='/guestbook/api/logout' hx-target='#admin-section' hx-swap='outerHTML' style='margin-top: 10px;'>
