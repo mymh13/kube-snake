@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Guestbook.Services;
 
 namespace Guestbook.Extensions;
@@ -9,7 +10,10 @@ public static class ServiceExtensions
         services.AddSingleton<MongoDbService>();
 
         // Session support for admin authentication
-        services.AddDistributedMemoryCache();
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = "guestbook-redis-master:6379"; // Use your Redis service name and port
+        });
         services.AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromMinutes(30);

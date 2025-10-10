@@ -11,3 +11,9 @@ phase_one.md - documentation of phase one of the project
 phase_two.md - documentation of phase two  
 phase_three.md - documentation of phase three  
   
+### Current checklist:
+  
+1. Replace AddDistributedMemoryCache with Redis distributed cache
+2. After that we can fix the erranous log out/log in problem behaviour
+3. Then we need to fix the time and date and show the username (not the role) of the person who posts in the guestbook
+4. At this point we add the admin tool to delete posts
