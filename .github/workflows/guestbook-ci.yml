@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'apps/guestbook/**'
-      - '.github/workflows/guestbook-ci.yaml'
+      - '.github/workflows/guestbook-ci.yml'
   pull_request:
     branches: [ main ]
     paths:

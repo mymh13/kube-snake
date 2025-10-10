@@ -42,7 +42,7 @@ public static class HtmlHelper
             <div id='admin-section'>
                 <h3>Admin Panel</h3>
                 <form hx-post='/guestbook/api/messages' hx-target='#messages-list' hx-swap='innerHTML'>
-                    <textarea name='text' placeholder='Your message' maxlength='400' required></textarea><br>
+                    <textarea name='text' placeholder='Your message' maxlength='200' required></textarea><br>
                     <button type='submit'>Post Message</button>
                 </form>
                 <form hx-post='/guestbook/api/messages/delete' hx-target='#messages-list' hx-swap='innerHTML' style='margin-top: 10px;'>
