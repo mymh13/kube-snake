@@ -18,24 +18,32 @@ public static class MessageEndpoints
         });
 
         // POST /api/messages - Create message (admin only, returns updated message list)
-        app.MapPost("/api/messages", async (HttpContext context, MongoDbService mongoDb, [FromForm] string text) =>
+        app.MapPost("/api/messages", async (HttpContext context, MongoDbService mongoDb) =>
         {
             if (!AuthHelper.IsAdmin(context))
             {
                 return Results.Unauthorized();
             }
 
+            var form = await context.Request.ReadFormAsync();
+            var text = form["text"].ToString();
+
+            if (string.IsNullOrWhiteSpace(text) || text.Length > 400)
+            {
+                return Results.BadRequest("Message must be between 1 and 400 characters.");
+            }
+
             var message = new Message
             {
                 Text = text,
-                CreatedBy = "admin"
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = context.Session.GetString("Username") ?? "admin"
             };
 
             await mongoDb.CreateMessageAsync(message);
 
             var messages = await mongoDb.GetRecentMessagesAsync();
-            var html = HtmlHelper.RenderMessageList(messages);
-            return Results.Content(html, "text/html");
+            return Results.Content(HtmlHelper.RenderMessages(messages, true), "text/html");
         })
         .DisableAntiforgery(); // Disable CSRF for API endpoint
 
@@ -50,7 +58,7 @@ public static class MessageEndpoints
             await mongoDb.DeleteMessageAsync(id);
 
             var messages = await mongoDb.GetRecentMessagesAsync();
-            var html = HtmlHelper.RenderMessageList(messages);
+            var html = HtmlHelper.RenderMessages(messages, true); // Admin is always true here
             return Results.Content(html, "text/html");
         });
 
