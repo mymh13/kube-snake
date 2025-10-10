@@ -58,6 +58,7 @@ jobs:
         sed -i "s/tag: \".*\"/tag: \"$SHA\"/" helm/charts/guestbook/values.yaml
         git config --global user.email "ci-bot@example.com"
         git config --global user.name "CI Bot"
+        git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}
         git add helm/charts/guestbook/values.yaml
         git commit -m "Update guestbook image tag to $SHA"
         git push
