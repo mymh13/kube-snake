@@ -33,6 +33,8 @@ public static class HtmlHelper
                 html.Append($"<input type='checkbox' disabled style='margin-right: 10px; opacity: 0.3;'>");
             }
 
+            // TODO: Dates come out wrong, we need to look at formatting
+
             html.Append($"<strong>{msg.CreatedBy}</strong> ({msg.CreatedAt:yyyy-MM-dd HH:mm}): {msg.Text}");
             html.Append("</li>");
         }
