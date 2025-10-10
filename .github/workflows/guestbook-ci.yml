@@ -49,3 +49,13 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Update Helm values.yaml with new image tag
+      run: |
+        SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        sed -i "s/tag: \".*\"/tag: \"$SHA\"/" helm/charts/guestbook/values.yaml
+        git config --global user.email "ci-bot@example.com"
+        git config --global user.name "CI Bot"
+        git add helm/charts/guestbook/values.yaml
+        git commit -m "Update guestbook image tag to $SHA"
+        git push
