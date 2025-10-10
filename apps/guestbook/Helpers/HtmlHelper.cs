@@ -53,7 +53,10 @@ public static class HtmlHelper
         return @"
             <div id='admin-section'>
                 <h3>Admin Panel</h3>
-                <form hx-post='/guestbook/api/messages' hx-target='#messages-list' hx-swap='innerHTML'>
+                <form hx-post='/guestbook/api/messages' 
+                      hx-target='#messages-list' 
+                      hx-swap='innerHTML'
+                      hx-on::after-request=""this.reset()"">
                     <textarea name='text' placeholder='Your message' maxlength='200' required 
                           style='width: 400px; height: 80px; resize: both;'></textarea><br>
                     <button type='submit'>Post Message</button>
