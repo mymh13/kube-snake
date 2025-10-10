@@ -3,7 +3,7 @@ replicaCount: 2
 image:
   repository: ghcr.io/mymh13/kube-snake-guestbook
   pullPolicy: Always
-  tag: "main-38d3a5e"
+  tag: "main-db064bb"
 
 service:
   name: guestbook-service
