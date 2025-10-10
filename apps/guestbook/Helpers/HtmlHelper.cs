@@ -12,6 +12,12 @@ public static class HtmlHelper
         }
 
         var html = new System.Text.StringBuilder();
+
+        if (isAdmin)
+        {
+            html.Append("<form id='delete-form' hx-post='/guestbook/api/messages/delete' hx-target='#messages-list' hx-swap='innerHTML'>");
+        }
+
         html.Append("<ul style='list-style: none; padding: 0;'>");
 
         foreach (var msg in messages)
@@ -33,6 +39,12 @@ public static class HtmlHelper
 
         html.Append("</ul>");
 
+        if (isAdmin)
+        {
+            html.Append("<button type='submit' style='margin-top: 10px;'>Delete Selected</button>");
+            html.Append("</form>");
+        }
+
         return html.ToString();
     }
 
@@ -45,10 +57,7 @@ public static class HtmlHelper
                     <textarea name='text' placeholder='Your message' maxlength='200' required></textarea><br>
                     <button type='submit'>Post Message</button>
                 </form>
-                <form hx-post='/guestbook/api/messages/delete' hx-target='#messages-list' hx-swap='innerHTML' style='margin-top: 10px;'>
-                    <button type='submit'>Delete Selected</button>
-                </form>
-                <form hx-post='/guestbook/api/logout' hx-target='#admin-section' hx-swap='outerHTML'>
+                <form hx-post='/guestbook/api/logout' hx-target='#admin-section' hx-swap='outerHTML' style='margin-top: 10px;'>
                     <button type='submit'>Logout</button>
                 </form>
             </div>";
