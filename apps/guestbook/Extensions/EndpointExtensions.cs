@@ -6,7 +6,6 @@ public static class EndpointExtensions
 {
     public static WebApplication MapGuestbookEndpoints(this WebApplication app)
     {
-        // Map endpoint groups
         app.MapMessageEndpoints();
         app.MapAuthEndpoints();
 
