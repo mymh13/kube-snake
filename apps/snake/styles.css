@@ -84,18 +84,26 @@ h2 {
     margin: 20px auto 15px auto;
 }
 
+/* Game controls wrapper */
+.controls-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin: 15px auto 20px auto;
+}
+
 /* Game controls */
 .controls {
-    margin: 15px auto 20px auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
 }
 
 .arrow-row {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     justify-content: center;
 }
 
@@ -103,22 +111,44 @@ h2 {
     background: linear-gradient(135deg, #4ec9b0, #3aa18c);
     border: none;
     color: #000;
-    font-size: 2em;
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
+    font-size: 1.2em;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 .controls button:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(78, 201, 176, 0.4);
+    box-shadow: 0 5px 10px rgba(78, 201, 176, 0.4);
 }
 
 .controls button:active {
     transform: scale(0.95);
+}
+
+/* Controls info box */
+.controls-info {
+    background: #1e1e1e;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+    text-align: left;
+    min-width: 150px;
+}
+
+.controls-info p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #d4d4d4;
+}
+
+.controls-info strong {
+    color: #4ec9b0;
+    font-size: 1em;
 }
 
 /* Guestbook section */

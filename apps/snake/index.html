@@ -13,39 +13,61 @@
         <h1>🐍 Kube-Snake</h1>
         <a href="/" class="back-link">← Back to Home</a>
 
-        <!-- Game controls (Start/Reset) -->
+        <!-- Game controls (Start/Reset/Pause) -->
         <div class="game-controls">
-            <button hx-post="http://localhost:5153/snake-api/start" hx-swap="none" class="control-btn">START</button>
-            <button hx-post="http://localhost:5153/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
+            <button hx-post="/snake-api/start" hx-swap="none" class="control-btn">START</button>
+            <button hx-post="/snake-api/pause" hx-swap="none" class="control-btn">PAUSE</button>
+            <button hx-post="/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
         </div>
 
         <!-- Game canvas rendered by backend -->
-        <div id="game-container" hx-get="http://localhost:5153/snake-api/render"
-            hx-trigger="load, every 200ms from:body" hx-swap="innerHTML">
+        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 100ms from:body"
+            hx-swap="innerHTML">
             Loading game...
         </div>
 
         <!-- Direction controls -->
-        <div class="controls">
-            <div class="arrow-row">
-                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"up"}'
-                    hx-swap="none">⬆️</button>
+        <div class="controls-wrapper">
+            <div class="controls">
+                <div class="arrow-row">
+                    <button hx-post="/snake-api/move" hx-vals='{"direction":"up"}' hx-swap="none">⬆️</button>
+                </div>
+                <div class="arrow-row">
+                    <button hx-post="/snake-api/move" hx-vals='{"direction":"left"}' hx-swap="none">⬅️</button>
+                    <button hx-post="/snake-api/move" hx-vals='{"direction":"down"}' hx-swap="none">⬇️</button>
+                    <button hx-post="/snake-api/move" hx-vals='{"direction":"right"}' hx-swap="none">➡️</button>
+                </div>
             </div>
-            <div class="arrow-row">
-                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"left"}'
-                    hx-swap="none">⬅️</button>
-                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"down"}'
-                    hx-swap="none">⬇️</button>
-                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"right"}'
-                    hx-swap="none">➡️</button>
+
+            <div class="controls-info">
+                <p><strong>Controls:</strong></p>
+                <p>🎮 Click arrows</p>
+                <p>⌨️ Arrow keys</p>
+                <p>🅆🄰🅂🄳 WASD keys</p>
             </div>
         </div>
 
+        <!-- Keyboard listeners (invisible) -->
+        <div hx-post="/snake-api/move" hx-vals='{"direction":"up"}'
+            hx-trigger="keydown[key=='ArrowUp'] from:body, keydown[key=='w'] from:body, keydown[key=='W'] from:body"
+            hx-swap="none"></div>
+
+        <div hx-post="/snake-api/move" hx-vals='{"direction":"down"}'
+            hx-trigger="keydown[key=='ArrowDown'] from:body, keydown[key=='s'] from:body, keydown[key=='S'] from:body"
+            hx-swap="none"></div>
+
+        <div hx-post="/snake-api/move" hx-vals='{"direction":"left"}'
+            hx-trigger="keydown[key=='ArrowLeft'] from:body, keydown[key=='a'] from:body, keydown[key=='A'] from:body"
+            hx-swap="none"></div>
+
+        <div hx-post="/snake-api/move" hx-vals='{"direction":"right"}'
+            hx-trigger="keydown[key=='ArrowRight'] from:body, keydown[key=='d'] from:body, keydown[key=='D'] from:body"
+            hx-swap="none"></div>
         <hr>
 
         <!-- Guestbook embedded at bottom -->
         <h2>📝 Guestbook</h2>
-        <div id="guestbook" hx-get="http://localhost:8080/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
+        <div id="guestbook" hx-get="/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
             Loading guestbook...
         </div>
     </div>
