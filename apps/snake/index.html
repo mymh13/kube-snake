@@ -3,33 +3,50 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Kube-Snake Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kube-Snake</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>🐍 Snake Game</h1>
+        <h1>🐍 Kube-Snake</h1>
         <a href="/" class="back-link">← Back to Home</a>
 
+        <!-- Game controls (Start/Reset) -->
+        <div class="game-controls">
+            <button hx-post="http://localhost:5153/snake-api/start" hx-swap="none" class="control-btn">START</button>
+            <button hx-post="http://localhost:5153/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
+        </div>
+
         <!-- Game canvas rendered by backend -->
-        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 100ms" hx-swap="innerHTML">
+        <div id="game-container" hx-get="http://localhost:5153/snake-api/render"
+            hx-trigger="load, every 200ms from:body" hx-swap="innerHTML">
             Loading game...
         </div>
 
-        <!-- Game controls -->
+        <!-- Direction controls -->
         <div class="controls">
-            <button hx-post="/snake-api/move" hx-vals='{"direction":"up"}'>⬆️</button>
-            <button hx-post="/snake-api/move" hx-vals='{"direction":"left"}'>⬅️</button>
-            <button hx-post="/snake-api/move" hx-vals='{"direction":"down"}'>⬇️</button>
-            <button hx-post="/snake-api/move" hx-vals='{"direction":"right"}'>➡️</button>
+            <div class="arrow-row">
+                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"up"}'
+                    hx-swap="none">⬆️</button>
+            </div>
+            <div class="arrow-row">
+                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"left"}'
+                    hx-swap="none">⬅️</button>
+                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"down"}'
+                    hx-swap="none">⬇️</button>
+                <button hx-post="http://localhost:5153/snake-api/move" hx-vals='{"direction":"right"}'
+                    hx-swap="none">➡️</button>
+            </div>
         </div>
 
         <hr>
 
         <!-- Guestbook embedded at bottom -->
         <h2>📝 Guestbook</h2>
-        <div id="guestbook" hx-get="/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
+        <div id="guestbook" hx-get="http://localhost:8080/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
+            Loading guestbook...
         </div>
     </div>
 

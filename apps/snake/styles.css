@@ -1,0 +1,141 @@
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0px 20px 20px 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: #4ec9b0;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(78, 201, 176, 0.3);
+}
+
+h2 {
+    color: #4ec9b0;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.back-link {
+    display: inline-block;
+    color: #4ec9b0;
+    text-decoration: none;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: #3aa18c;
+    text-decoration: underline;
+}
+
+/* Game control buttons (Start/Reset) */
+.game-controls {
+    margin: 20px auto;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.control-btn {
+    background: linear-gradient(135deg, #4ec9b0, #3aa18c);
+    border: none;
+    color: #000;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(78, 201, 176, 0.4);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+/* Game container */
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto 15px auto;
+}
+
+/* Game controls */
+.controls {
+    margin: 15px auto 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.arrow-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.controls button {
+    background: linear-gradient(135deg, #4ec9b0, #3aa18c);
+    border: none;
+    color: #000;
+    font-size: 2em;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.controls button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(78, 201, 176, 0.4);
+}
+
+.controls button:active {
+    transform: scale(0.95);
+}
+
+/* Guestbook section */
+#guestbook {
+    text-align: left;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    width: 100%;
+    max-width: 600px;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #4ec9b0;
+    margin: 20px 0 15px 0;
+    opacity: 0.3;
+    width: 100%;
+}
