@@ -1,0 +1,12 @@
+:80 {
+    root * /usr/share/caddy
+    file_server
+    
+    # Handle /snake path
+    handle_path /snake* {
+        try_files {path} /index.html
+    }
+    
+    # Fallback for direct access
+    try_files {path} /index.html
+}

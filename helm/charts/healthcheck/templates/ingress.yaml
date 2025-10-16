@@ -1,12 +1,10 @@
 {{- if .Values.ingress.enabled }}
-# Ingress for paths that need rewriting
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Chart.Name }}-ingress-rewrite
+  name: {{ .Chart.Name }}-ingress
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.clusterIssuer }}
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -20,52 +18,31 @@ spec:
   - host: {{ .Values.ingress.host }}
     http:
       paths:
-      # Snake API routes
-      - path: /snake-api(/|$)(.*)
-        pathType: ImplementationSpecific
+      # Snake API routes (with rewrite)
+      - path: /snake-api
+        pathType: Prefix
         backend:
           service:
             name: snake-api
             port:
               number: 8080
-      # Snake frontend routes
-      - path: /snake(/|$)(.*)
-        pathType: ImplementationSpecific
+      # Snake frontend routes (with rewrite)
+      - path: /snake
+        pathType: Prefix
         backend:
           service:
             name: snake
             port:
               number: 80
-      # Guestbook routes
-      - path: /guestbook(/|$)(.*)
-        pathType: ImplementationSpecific
+      # Guestbook routes (with rewrite)
+      - path: /guestbook
+        pathType: Prefix
         backend:
           service:
             name: guestbook
             port:
               number: 80
----
-# Ingress for root path (no rewrite needed)
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ .Chart.Name }}-ingress-root
-  annotations:
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.clusterIssuer }}
-    {{- with .Values.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-spec:
-  ingressClassName: {{ .Values.ingress.className }}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.host }}
-    secretName: {{ .Values.ingress.tlsSecretName }}
-  rules:
-  - host: {{ .Values.ingress.host }}
-    http:
-      paths:
-      # Healthcheck routes (catch-all, no rewrite)
+      # Healthcheck routes (NO rewrite - must be last)
       - path: /
         pathType: Prefix
         backend:
