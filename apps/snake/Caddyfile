@@ -2,20 +2,13 @@
     root * /usr/share/caddy
     file_server
     
-    # Serve static assets directly
-    @static {
-        path *.css *.js *.ico *.png *.jpg *.svg
-    }
-    handle @static {
-        file_server
+    # Handle /snake path - serve from /snake subdirectory
+    handle_path /snake* {
+        root * /usr/share/caddy/snake
+        try_files {path} /index.html
     }
     
-    # Handle /snake path for HTML
-    handle /snake* {
-        try_files {path} /snake/index.html /index.html
-    }
-    
-    # Fallback to index.html for root
+    # Root access - serve from root
     handle {
         try_files {path} /index.html
     }
