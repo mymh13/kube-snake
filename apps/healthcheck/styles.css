@@ -104,3 +104,36 @@ a:visited {
     color: #4ec9b0;
     font-weight: 600;
 }
+
+/* Navigation section */
+.navigation {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.nav-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #4ec9b0, #3aa18c);
+    color: #000;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(78, 201, 176, 0.4);
+    color: #fff;
+    background: linear-gradient(135deg, #3aa18c, #4ec9b0);
+}
+
+.nav-button:visited {
+    color: #000;
+}

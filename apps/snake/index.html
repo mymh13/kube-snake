@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kube-Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🐍 Snake Game</h1>
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <!-- Game canvas rendered by backend -->
+        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 100ms" hx-swap="innerHTML">
+            Loading game...
+        </div>
+
+        <!-- Game controls -->
+        <div class="controls">
+            <button hx-post="/snake-api/move" hx-vals='{"direction":"up"}'>⬆️</button>
+            <button hx-post="/snake-api/move" hx-vals='{"direction":"left"}'>⬅️</button>
+            <button hx-post="/snake-api/move" hx-vals='{"direction":"down"}'>⬇️</button>
+            <button hx-post="/snake-api/move" hx-vals='{"direction":"right"}'>➡️</button>
+        </div>
+
+        <hr>
+
+        <!-- Guestbook embedded at bottom -->
+        <h2>📝 Guestbook</h2>
+        <div id="guestbook" hx-get="/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</body>
+
+</html>
