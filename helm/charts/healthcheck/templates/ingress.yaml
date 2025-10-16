@@ -20,8 +20,8 @@ spec:
     http:
       paths:
       # Snake API routes (must come before /snake to avoid conflicts)
-      - path: /snake-api
-        pathType: Prefix
+      - path: /snake-api(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: snake-api
@@ -40,7 +40,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: guestbook-service
+            name: guestbook
             port:
               number: 80
       # Healthcheck routes (must be last as it's the catch-all)

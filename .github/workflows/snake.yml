@@ -57,7 +57,7 @@ jobs:
         run: |
           git config --global user.name "CI Bot"
           git config --global user.email "ci-bot@example.com"
-          git add helm/charts/snake-api/values.yaml
-          git commit -m "Update snake-api image tag to ${{ steps.meta.outputs.tags }}" || echo "No changes to commit"
+          git add helm/charts/snake/values.yaml
+          git commit -m "Update snake frontend image tag to ${{ steps.meta.outputs.tags }}" || echo "No changes to commit"
           git pull --rebase origin main
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }} HEAD:main
