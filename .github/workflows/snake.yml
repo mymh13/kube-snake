@@ -1,4 +1,4 @@
-name: Snake Frontend CI/CD
+name: Snake Frontend (HTMX is king) CI/CD
 
 on:
   push:
