@@ -2,11 +2,21 @@
     root * /usr/share/caddy
     file_server
     
-    # Handle /snake path
-    handle_path /snake* {
-        try_files {path} /index.html
+    # Serve static assets directly
+    @static {
+        path *.css *.js *.ico *.png *.jpg *.svg
+    }
+    handle @static {
+        file_server
     }
     
-    # Fallback for direct access
-    try_files {path} /index.html
+    # Handle /snake path for HTML
+    handle /snake* {
+        try_files {path} /snake/index.html /index.html
+    }
+    
+    # Fallback to index.html for root
+    handle {
+        try_files {path} /index.html
+    }
 }
