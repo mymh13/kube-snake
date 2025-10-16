@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/mymh13/kube-snake/snake
-  tag: "main-latest"
+  tag: "main-b38c0b8-20251016210902"
   pullPolicy: Always
 
 service:
