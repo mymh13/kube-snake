@@ -1,0 +1,6 @@
+apiVersion: v2
+name: snake
+description: Snake game frontend (static files served by Caddy)
+type: application
+version: 0.1.0
+appVersion: "1.0"

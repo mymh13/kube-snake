@@ -1,0 +1,60 @@
+name: Snake API CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/snake-api/**'
+      - '.github/workflows/snake-api.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/kube-snake/snake-api
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix={{branch}}-,suffix=-{{date 'YYYYMMDDHHmmss'}},format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/snake-api
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Update Helm values
+        run: |
+          NEW_TAG=$(echo "${{ steps.meta.outputs.tags }}" | cut -d':' -f2)
+          sed -i "s|tag:.*|tag: \"$NEW_TAG\"|" helm/charts/snake-api/values.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add helm/charts/snake-api/values.yaml
+          git commit -m "Update snake-api image tag to ${{ steps.meta.outputs.tags }}" || echo "No changes to commit"
+          git push

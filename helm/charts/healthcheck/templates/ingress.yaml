@@ -18,14 +18,22 @@ spec:
   - host: {{ .Values.ingress.host }}
     http:
       paths:
-      # Healthcheck routes
-      - path: /
+      # Snake API routes (must come before /snake to avoid conflicts)
+      - path: /snake-api
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.service.name }}
+            name: snake-api
             port:
-              number: {{ .Values.service.port }}
+              number: 8080
+      # Snake frontend routes
+      - path: /snake
+        pathType: Prefix
+        backend:
+          service:
+            name: snake
+            port:
+              number: 80
       # Guestbook routes
       - path: /guestbook
         pathType: Prefix
@@ -34,4 +42,12 @@ spec:
             name: guestbook-service
             port:
               number: 80
+      # Healthcheck routes (must be last as it's the catch-all)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.service.name }}
+            port:
+              number: {{ .Values.service.port }}
 {{- end }}

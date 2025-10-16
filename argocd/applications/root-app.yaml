@@ -1,17 +1,131 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root-applications
+  name: root-app
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/mymh13/kube-snake.git
-    targetRevision: HEAD
+    targetRevision: main
     path: argocd/applications
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: healthcheck
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/healthcheck
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mongodb
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/mongodb
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: secrets
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/secrets
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: snake
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/snake
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: snake-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mymh13/kube-snake.git
+    targetRevision: main
+    path: helm/charts/snake-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
   syncPolicy:
     automated:
       prune: true

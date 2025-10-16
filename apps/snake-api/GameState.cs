@@ -11,6 +11,7 @@ public class GameState
     private string Direction { get; set; } = "right";
     private bool GameOver { get; set; } = false;
     private bool GameStarted { get; set; } = false;
+    private bool GamePaused { get; set; } = false;
     private int Score { get; set; } = 0;
     private readonly System.Timers.Timer _timer;
 
@@ -29,6 +30,16 @@ public class GameState
         if (!GameStarted && !GameOver)
         {
             GameStarted = true;
+            GamePaused = false;
+        }
+    }
+
+    // Toggle pause
+    public void TogglePause()
+    {
+        if (GameStarted && !GameOver)
+        {
+            GamePaused = !GamePaused;
         }
     }
 
@@ -40,6 +51,7 @@ public class GameState
         Direction = "right";
         GameOver = false;
         GameStarted = false;
+        GamePaused = false;
         Score = 0;
         _timer.Interval = 300; // Reset speed
     }
@@ -47,7 +59,7 @@ public class GameState
     // Change direction (called by button press)
     public void ChangeDirection(string direction)
     {
-        if (!GameStarted || GameOver) return;
+        if (!GameStarted || GameOver || GamePaused) return;
 
         // Prevent reversing
         if (direction == "up" && Direction != "down") Direction = direction;
@@ -59,7 +71,7 @@ public class GameState
     // Move snake (called by timer)
     public void Move(string currentDirection)
     {
-        if (!GameStarted || GameOver) return;
+        if (!GameStarted || GameOver || GamePaused) return;
 
         // Calculate new head position
         var head = Snake[0];
@@ -143,16 +155,15 @@ public class GameState
         }
 
         html += "</div>";
-        html += $"<p style='color: #4ec9b0; font-size: 1.5em; margin-top: 10px;'>Score: {Score}</p>";
+        html += $"<p style='color: #4ec9b0; font-size: 1.5em; margin: 10px 0 5px 0;'>Score: {Score}</p>";
 
-        if (GameOver)
-        {
-            html += "<p style='color: #ff6b6b; font-size: 1.5em;'>GAME OVER!</p>";
-        }
-        else if (!GameStarted)
-        {
-            html += "<p style='color: #4ec9b0; font-size: 1.2em;'>Press START to begin!</p>";
-        }
+        // Fixed height status message container
+        var statusMessage = GameOver ? "<span style='color: #ff6b6b; font-size: 1.5em;'>GAME OVER!</span>" :
+                       GamePaused ? "<span style='color: #f5ab3cff; font-size: 1.5em;'>PAUSED</span>" :
+                       !GameStarted ? "<span style='color: #4ec9b0; font-size: 1.2em;'>Press START to begin!</span>" :
+                       "<span style='opacity: 0;'>-</span>"; // Invisible placeholder
+
+        html += $"<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'>{statusMessage}</div>";
 
         return html;
     }

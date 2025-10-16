@@ -47,6 +47,12 @@ app.MapPost("/start", () =>
     return Results.Ok();
 });
 
+app.MapPost("/pause", () =>
+{
+    gameState.TogglePause();
+    return Results.Ok();
+});
+
 app.MapPost("/reset", () =>
 {
     gameState.Reset();
