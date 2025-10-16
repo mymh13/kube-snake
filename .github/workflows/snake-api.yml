@@ -1,4 +1,4 @@
-name: Snake API CI/CD
+name: Snake API (backend) CI/CD
 
 on:
   push:
