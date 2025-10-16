@@ -22,10 +22,13 @@
         </div>
 
         <!-- Game canvas rendered by backend -->
-        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 100ms from:body"
-            hx-swap="innerHTML">
+        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load" hx-swap="innerHTML">
             Loading game...
         </div>
+
+        <!-- Add manual refresh button for now -->
+        <button hx-get="/snake-api/render" hx-target="#game-container" hx-swap="innerHTML"
+            class="control-btn">REFRESH</button>
 
         <!-- Direction controls -->
         <div class="controls-wrapper">

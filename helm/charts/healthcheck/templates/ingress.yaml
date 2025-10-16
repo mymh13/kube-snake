@@ -36,8 +36,8 @@ spec:
             port:
               number: 80
       # Guestbook routes
-      - path: /guestbook
-        pathType: Prefix
+      - path: /guestbook(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: guestbook
