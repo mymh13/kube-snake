@@ -5,6 +5,7 @@ metadata:
   name: {{ .Chart.Name }}-ingress
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.clusterIssuer }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -27,8 +28,8 @@ spec:
             port:
               number: 8080
       # Snake frontend routes
-      - path: /snake
-        pathType: Prefix
+      - path: /snake(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: snake
