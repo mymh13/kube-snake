@@ -24,19 +24,19 @@
 
             <h3>Application Stack</h3>
             <p>
-                <strong>Backend:</strong> .NET 9 Minimal API (2 replicas, horizontal scaling)<br>
-                <strong>Frontend:</strong> HTMX (hypermedia-driven, zero JavaScript framework)<br>
-                <strong>Database:</strong> MongoDB StatefulSet (5Gi PVC, persistent storage)<br>
-                <strong>Session Store:</strong> Redis (Bitnami Helm chart, distributed cache)<br>
-                <strong>Reverse Proxy:</strong> Caddy (automatic TLS via Let's Encrypt)
+                <strong>Backend:</strong> .NET 9 Minimal API (2 replicas)<br>
+                <strong>Frontend:</strong> HTMX (hypermedia-driven, zero JS framework)<br>
+                <strong>Database:</strong> MongoDB StatefulSet (5Gi PVC)<br>
+                <strong>Session:</strong> Redis (Bitnami Helm chart, distributed cache)<br>
+                <strong>Proxy:</strong> Caddy (automatic TLS via Let's Encrypt)
             </p>
 
             <h3>Security</h3>
             <p>
                 <strong>Secrets:</strong> Bitnami Sealed Secrets (asymmetric encryption, Git-safe)<br>
-                <strong>Network:</strong> ClusterIP service isolation, path-based Ingress routing<br>
-                <strong>Authentication:</strong> Cookie-based sessions (HttpOnly, Secure, SameSite=None)<br>
-                <strong>Storage:</strong> DataProtection keys on PVC (consistent encryption across replicas)
+                <strong>Network:</strong> ClusterIP isolation, path-based Ingress routing<br>
+                <strong>Auth:</strong> Cookie-based sessions (HttpOnly, Secure, SameSite=None)<br>
+                <strong>Storage:</strong> DataProtection keys on PVC (consistent encryption)
             </p>
         </div>
 
