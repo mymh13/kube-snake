@@ -1,8 +1,9 @@
 {{- if .Values.ingress.enabled }}
+# Ingress for paths that need rewriting
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Chart.Name }}-ingress
+  name: {{ .Chart.Name }}-ingress-rewrite
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.clusterIssuer }}
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -19,7 +20,7 @@ spec:
   - host: {{ .Values.ingress.host }}
     http:
       paths:
-      # Snake API routes (must come before /snake to avoid conflicts)
+      # Snake API routes
       - path: /snake-api(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
@@ -43,7 +44,28 @@ spec:
             name: guestbook
             port:
               number: 80
-      # Healthcheck routes (must be last as it's the catch-all)
+---
+# Ingress for root path (no rewrite needed)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-ingress-root
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.certManager.clusterIssuer }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: {{ .Values.ingress.tlsSecretName }}
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      # Healthcheck routes (catch-all, no rewrite)
       - path: /
         pathType: Prefix
         backend:
