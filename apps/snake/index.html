@@ -22,7 +22,8 @@
         </div>
 
         <!-- Game canvas with SSE -->
-        <div id="game-container" hx-ext="sse" sse-connect="/snake-api/game-stream" sse-swap="gameUpdate">
+        <div id="game-container" hx-ext="sse" sse-connect="/snake-api/game-stream" sse-swap="gameUpdate"
+            hx-swap="innerHTML">
             Loading game...
         </div>
 
@@ -72,9 +73,9 @@
         </div>
     </div>
 
-    <!-- HTMX included -->
+    <!-- HTMX with SSE extension -->
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
-    <script src="https://unpkg.com/htmx-ext-sse@2.0.0/sse.js"></script>
+    <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
 </body>
 
 </html>
