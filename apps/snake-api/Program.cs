@@ -11,7 +11,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.Name = ".SnakeGame.Session";
-    options.Cookie.SameSite = SameSiteMode.Lax; // Important for cross-origin
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 // Add CORS policy
@@ -26,7 +26,7 @@ builder.Services.AddCors(options =>
               )
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials(); // ✅ Required for session cookies!
+              .AllowCredentials();
     });
 });
 
@@ -55,7 +55,6 @@ var gameStates = new ConcurrentDictionary<string, GameState>();
 // Helper to get or create game state for session
 GameState GetGameState(HttpContext context)
 {
-    // Ensure session is loaded
     var sessionId = context.Session.GetString("SessionId");
     if (string.IsNullOrEmpty(sessionId))
     {
@@ -86,7 +85,7 @@ GameState GetGameState(HttpContext context)
 // Endpoints
 app.MapGet("/render", async (HttpContext context) =>
 {
-    await context.Session.LoadAsync(); // ✅ Ensure session is loaded
+    await context.Session.LoadAsync();
     var gameState = GetGameState(context);
     return Results.Content(gameState.RenderHTML(), "text/html");
 });
@@ -118,11 +117,33 @@ app.MapPost("/reset", async (HttpContext context) =>
     return Results.Ok();
 });
 
-app.MapPost("/move", async (HttpContext context, MoveRequest request) =>
+app.MapPost("/move", async (HttpContext context) =>
 {
     await context.Session.LoadAsync();
+
+    // Read form data (HTMX default) OR JSON
+    string? direction = null;
+
+    if (context.Request.HasFormContentType)
+    {
+        // Form data from HTMX
+        direction = context.Request.Form["direction"].FirstOrDefault();
+    }
+    else if (context.Request.ContentType?.Contains("application/json") == true)
+    {
+        // JSON fallback
+        var request = await context.Request.ReadFromJsonAsync<MoveRequest>();
+        direction = request?.Direction;
+    }
+
+    if (string.IsNullOrEmpty(direction))
+    {
+        Console.WriteLine("❌ No direction provided");
+        return Results.BadRequest("Direction is required");
+    }
+
     var gameState = GetGameState(context);
-    gameState.Move(request.Direction);
+    gameState.Move(direction);
     return Results.Ok();
 });
 

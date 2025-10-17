@@ -77,14 +77,9 @@
 
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
     <script>
-        // Configure HTMX to send credentials and JSON content type
+        // Configure HTMX to send credentials (cookies) with all requests
         document.body.addEventListener('htmx:configRequest', function (evt) {
             evt.detail.credentials = 'include';
-
-            // For POST requests with hx-vals, send as JSON
-            if (evt.detail.verb === 'post' && evt.detail.parameters) {
-                evt.detail.headers['Content-Type'] = 'application/json';
-            }
         });
     </script>
 </body>
