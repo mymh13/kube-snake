@@ -1,0 +1,10 @@
+# Use Bitnami Redis Helm chart
+auth:
+  enabled: false  # Disable password for simplicity
+
+master:
+  persistence:
+    enabled: false  # No persistence needed for game state
+
+replica:
+  replicaCount: 0  # Only need master for this use case
