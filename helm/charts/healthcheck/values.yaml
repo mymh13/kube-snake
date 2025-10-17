@@ -9,7 +9,7 @@ image:
 # Uses 'latest' tag with pullPolicy: Always to ensure newest image is pulled
 
 # Number of pod replicas
-replicaCount: 1
+replicaCount: 2
 
 # Service configuration
 service:
