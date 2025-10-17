@@ -3,9 +3,9 @@ namespace SnakeApi;
 public class GameState
 {
     private readonly RedisGameStateStore? _redisStore;
-    private List<(int X, int Y)> Snake;
+    private List<(int X, int Y)> Snake = null!;  // Add = null! to fix warning
     private (int X, int Y) Food;
-    private string Direction;
+    private string Direction = null!;  // Add = null! to fix warning
     private int Score;
     private bool GameStarted;
     private bool GameOver;
@@ -183,14 +183,14 @@ public class GameState
 
         foreach (var segment in Snake)
         {
-            int index = segment.Y * Width + segment.X;
+            int index = segment.Y * Width + segment.X;  // ✅ Tuples use .X and .Y directly
             if (index >= 0 && index < grid.Length)
             {
                 grid[index] = "<div style='width: 20px; height: 20px; background: #4ec9b0; border-radius: 2px;'></div>";
             }
         }
 
-        int foodIndex = Food.Y * Width + Food.X;
+        int foodIndex = Food.Y * Width + Food.X;  // ✅ Tuples use .X and .Y directly
         if (foodIndex >= 0 && foodIndex < grid.Length)
         {
             grid[foodIndex] = "<div style='width: 20px; height: 20px; background: #f5ab3cff; border-radius: 2px;'></div>";
