@@ -47,8 +47,13 @@ app.MapGet("/game-stream", async (HttpContext context) =>
     }
 });
 
-app.MapGet("/render", () =>
+app.MapGet("/render", (HttpContext context) =>
 {
+    // Disable caching
+    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    context.Response.Headers["Pragma"] = "no-cache";
+    context.Response.Headers["Expires"] = "0";
+
     // Move the snake on each render call (only if game is active and not paused/over)
     if (gameState.IsGameStarted && !gameState.IsGameOver && !gameState.IsGamePaused)
     {
