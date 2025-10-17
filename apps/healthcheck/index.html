@@ -32,19 +32,28 @@
 
             <h3>Application Stack</h3>
             <p>
-                <strong>Backend:</strong> .NET 9 Minimal API (2 replicas)<br>
-                <strong>Frontend:</strong> HTMX (hypermedia-driven, zero JS framework)<br>
-                <strong>Database:</strong> MongoDB StatefulSet (5Gi PVC)<br>
-                <strong>Session:</strong> Redis (Bitnami Helm chart, distributed cache)<br>
-                <strong>Proxy:</strong> Caddy (automatic TLS via Let's Encrypt)
+                <strong>Snake API:</strong> .NET 9 Minimal API (real-time game logic, 300ms tick rate)<br>
+                <strong>Snake Frontend:</strong> HTMX + hypermedia (SSE polling, zero JS frameworks)<br>
+                <strong>Guestbook API:</strong> .NET 9 + MongoDB (admin auth, CRUD operations)<br>
+                <strong>Database:</strong> MongoDB StatefulSet (5Gi PVC, guestbook persistence)<br>
+                <strong>Cache:</strong> Redis (Bitnami Helm, session state + distributed game state)<br>
+                <strong>Proxy:</strong> Caddy (automatic TLS, path-based routing: /snake, /guestbook, /healthcheck)
+            </p>
+
+            <h3>Session & State Management</h3>
+            <p>
+                <strong>Sessions:</strong> ASP.NET Core sessions (cookie-based, HttpOnly, SameSite=Lax)<br>
+                <strong>Game State:</strong> Redis-backed persistence (per-session isolation, 24h TTL)<br>
+                <strong>Credentials:</strong> CORS-enabled cookie propagation across microservices<br>
+                <strong>Privacy:</strong> GDPR-compliant (functional cookies only, no tracking)
             </p>
 
             <h3>Security</h3>
             <p>
                 <strong>Secrets:</strong> Bitnami Sealed Secrets (asymmetric encryption, Git-safe)<br>
-                <strong>Network:</strong> ClusterIP isolation, path-based Ingress routing<br>
-                <strong>Auth:</strong> Cookie-based sessions (HttpOnly, Secure, SameSite=None)<br>
-                <strong>Storage:</strong> DataProtection keys on PVC (consistent encryption)
+                <strong>Network:</strong> ClusterIP isolation, Ingress path-based routing<br>
+                <strong>Auth:</strong> Cookie-based sessions (HttpOnly, Secure, SameSite)<br>
+                <strong>Storage:</strong> DataProtection keys on PVC (consistent encryption across pods)
             </p>
         </div>
 
