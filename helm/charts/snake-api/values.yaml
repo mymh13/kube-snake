@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/mymh13/kube-snake/snake-api
   pullPolicy: Always
-  tag: "main-30f7b62-20251017112837"
+  tag: "main-6b48ece-20251017114746"
 
 service:
   type: ClusterIP
