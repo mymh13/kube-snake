@@ -21,7 +21,7 @@ app.UseCors("AllowAll");
 app.UsePathBase("/snake-api");
 
 // Create game state WITH slower auto-timer
-var timer = new System.Timers.Timer(500); // 500ms = 2 FPS (playable speed)
+var timer = new System.Timers.Timer(300); // 300ms = 3 FPS
 var gameState = new GameState(timer);
 
 // Auto-move the snake on timer
