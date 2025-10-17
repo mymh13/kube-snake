@@ -41,9 +41,9 @@ timer.Start();
 // SSE endpoint (keep for future, but not used now)
 app.MapGet("/game-stream", async (HttpContext context) =>
 {
-    context.Response.Headers.Add("Content-Type", "text/event-stream");
-    context.Response.Headers.Add("Cache-Control", "no-cache");
-    context.Response.Headers.Add("Connection", "keep-alive");
+    context.Response.Headers["Content-Type"] = "text/event-stream";
+    context.Response.Headers["Cache-Control"] = "no-cache";
+    context.Response.Headers["Connection"] = "keep-alive";
 
     while (!context.RequestAborted.IsCancellationRequested)
     {

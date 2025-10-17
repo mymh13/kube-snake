@@ -130,10 +130,10 @@ public class GameState
         var head = Snake[0];
         var newHead = direction switch
         {
-            "up" => (head.X, head.Y - 1),
-            "down" => (head.X, head.Y + 1),
-            "left" => (head.X - 1, head.Y),
-            "right" => (head.X + 1, head.Y),
+            "up" => (X: head.X, Y: head.Y - 1),
+            "down" => (X: head.X, Y: head.Y + 1),
+            "left" => (X: head.X - 1, Y: head.Y),
+            "right" => (X: head.X + 1, Y: head.Y),
             _ => head
         };
 
