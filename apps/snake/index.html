@@ -63,10 +63,12 @@
 
         <hr>
 
-        <!-- Guestbook -->
-        <h2>📝 Guestbook</h2>
-        <div id="guestbook" hx-get="/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
-            Loading guestbook...
+        <!-- Link to Guestbook (navigate to healthcheck page) -->
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="/healthcheck" class="nav-button"
+                style="display: inline-block; padding: 10px 20px; background: #4ec9b0; color: white; text-decoration: none; border-radius: 5px;">
+                📝 View Guestbook
+            </a>
         </div>
 
         <!-- Privacy notice -->
