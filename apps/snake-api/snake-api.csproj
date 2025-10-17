@@ -7,8 +7,8 @@
     <RootNamespace>SnakeApi</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
-  </ItemGroup>
+  </ItemGroup> -->
 
 </Project>
