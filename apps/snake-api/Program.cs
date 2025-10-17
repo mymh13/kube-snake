@@ -27,6 +27,26 @@ var gameState = new GameState(timer);
 timer.Elapsed += (sender, e) => gameState.Move(gameState.CurrentDirection);
 timer.Start();
 
+// SSE endpoint for streaming game updates
+app.MapGet("/game-stream", async (HttpContext context) =>
+{
+    context.Response.Headers.Add("Content-Type", "text/event-stream");
+    context.Response.Headers.Add("Cache-Control", "no-cache");
+    context.Response.Headers.Add("Connection", "keep-alive");
+
+    // Send updates every 200ms
+    while (!context.RequestAborted.IsCancellationRequested)
+    {
+        var html = gameState.RenderHTML();
+
+        await context.Response.WriteAsync($"event: gameUpdate\n");
+        await context.Response.WriteAsync($"data: {html}\n\n");
+        await context.Response.Body.FlushAsync();
+
+        await Task.Delay(200);
+    }
+});
+
 app.MapGet("/render", () =>
 {
     return Results.Content(gameState.RenderHTML(), "text/html");
