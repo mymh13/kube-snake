@@ -63,12 +63,22 @@
 
         <hr>
 
-        <!-- Link to Guestbook (navigate to healthcheck page) -->
-        <div style="text-align: center; margin: 20px 0;">
-            <a href="/healthcheck" class="nav-button"
-                style="display: inline-block; padding: 10px 20px; background: #4ec9b0; color: white; text-decoration: none; border-radius: 5px;">
-                📝 View Guestbook
-            </a>
+        <!-- Guestbook Section -->
+        <hr>
+        <h2>📝 Guestbook</h2>
+        <div id="guestbook-container">
+            <div id="messages-list" hx-get="/guestbook/api/messages" hx-trigger="load, every 30s" hx-swap="innerHTML">
+                <p>Loading messages...</p>
+            </div>
+
+            <div id="admin-section">
+                <h3>Admin</h3>
+                <form hx-post="/guestbook/api/login" hx-target="#admin-section" hx-swap="outerHTML">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
         </div>
 
         <!-- Privacy notice -->
