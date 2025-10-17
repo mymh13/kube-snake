@@ -20,13 +20,19 @@ app.UseCors("AllowAll");
 
 app.UsePathBase("/snake-api");
 
-// Create game state WITHOUT auto-timer
-var timer = new System.Timers.Timer(300);
+// Create game state WITH auto-timer (needed for rate-limiting)
+var timer = new System.Timers.Timer(200); // 200ms = 5 FPS
 var gameState = new GameState(timer);
 
-// DON'T auto-start the timer - let the render endpoint drive movement
-// timer.Elapsed += (sender, e) => gameState.Move(gameState.CurrentDirection);
-// timer.Start();
+// Auto-move the snake on timer
+timer.Elapsed += (sender, e) =>
+{
+    if (gameState.IsGameStarted && !gameState.IsGameOver && !gameState.IsGamePaused)
+    {
+        gameState.Move(gameState.CurrentDirection);
+    }
+};
+timer.Start();
 
 // SSE endpoint (keep for future, but not used now)
 app.MapGet("/game-stream", async (HttpContext context) =>
@@ -54,12 +60,8 @@ app.MapGet("/render", (HttpContext context) =>
     context.Response.Headers["Pragma"] = "no-cache";
     context.Response.Headers["Expires"] = "0";
 
-    // Move the snake on each render call (only if game is active and not paused/over)
-    if (gameState.IsGameStarted && !gameState.IsGameOver && !gameState.IsGamePaused)
-    {
-        gameState.Move(gameState.CurrentDirection);
-    }
-
+    // Just render current state - don't move!
+    // The timer handles movement now
     return Results.Content(gameState.RenderHTML(), "text/html");
 });
 
