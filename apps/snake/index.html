@@ -21,8 +21,8 @@
             <button hx-post="/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
         </div>
 
-        <!-- Game canvas with polling fallback -->
-        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 0.2s" hx-swap="innerHTML">
+        <!-- Game canvas with polling -->
+        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 0.5s" hx-swap="innerHTML">
             Loading game...
         </div>
 
