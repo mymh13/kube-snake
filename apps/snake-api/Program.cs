@@ -20,21 +20,21 @@ app.UseCors("AllowAll");
 
 app.UsePathBase("/snake-api");
 
-// Background timer to auto-move snake
+// Create game state WITHOUT auto-timer
 var timer = new System.Timers.Timer(300);
 var gameState = new GameState(timer);
 
-timer.Elapsed += (sender, e) => gameState.Move(gameState.CurrentDirection);
-timer.Start();
+// DON'T auto-start the timer - let the render endpoint drive movement
+// timer.Elapsed += (sender, e) => gameState.Move(gameState.CurrentDirection);
+// timer.Start();
 
-// SSE endpoint for streaming game updates
+// SSE endpoint (keep for future, but not used now)
 app.MapGet("/game-stream", async (HttpContext context) =>
 {
     context.Response.Headers.Add("Content-Type", "text/event-stream");
     context.Response.Headers.Add("Cache-Control", "no-cache");
     context.Response.Headers.Add("Connection", "keep-alive");
 
-    // Send updates every 200ms
     while (!context.RequestAborted.IsCancellationRequested)
     {
         var html = gameState.RenderHTML();
@@ -49,6 +49,12 @@ app.MapGet("/game-stream", async (HttpContext context) =>
 
 app.MapGet("/render", () =>
 {
+    // Move the snake on each render call
+    if (gameState.IsRunning && !gameState.IsPaused)
+    {
+        gameState.Move(gameState.CurrentDirection);
+    }
+
     return Results.Content(gameState.RenderHTML(), "text/html");
 });
 
