@@ -17,6 +17,7 @@ out/
 *.sln.docstates
 helm/charts/secrets/guestbook-admin-credentials.yaml
 docs/kube-snake-documentation.docx
+secrets/
 
 # Visual Studio cache/options
 .vs/
