@@ -7,7 +7,6 @@
     <title>Kube-Snake</title>
     <link rel="stylesheet" href="/snake/styles.css">
     <link rel="icon" type="image/x-icon" href="/snake/favicon.ico">
-    <!-- NO session.js needed! C# handles it ✅ -->
 </head>
 
 <body>
@@ -77,6 +76,12 @@
     </div>
 
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
+    <script>
+        // Configure HTMX to send credentials (cookies) with all requests
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            evt.detail.credentials = 'include';
+        });
+    </script>
 </body>
 
 </html>
