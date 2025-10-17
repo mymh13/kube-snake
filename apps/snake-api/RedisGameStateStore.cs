@@ -6,7 +6,6 @@ namespace SnakeApi;
 public class RedisGameStateStore
 {
     private readonly IDatabase _db;
-    private const string GameStateKey = "snake:gamestate";
 
     public RedisGameStateStore(string connectionString)
     {
@@ -14,16 +13,18 @@ public class RedisGameStateStore
         _db = redis.GetDatabase();
     }
 
-    public GameStateData? GetGameState()
+    public GameStateData? GetGameState(string sessionId)
     {
-        var json = _db.StringGet(GameStateKey);
+        var key = $"snake:session:{sessionId}:gamestate";
+        var json = _db.StringGet(key);
         return json.HasValue ? JsonSerializer.Deserialize<GameStateData>(json!) : null;
     }
 
-    public void SaveGameState(GameStateData state)
+    public void SaveGameState(string sessionId, GameStateData state)
     {
+        var key = $"snake:session:{sessionId}:gamestate";
         var json = JsonSerializer.Serialize(state);
-        _db.StringSet(GameStateKey, json);
+        _db.StringSet(key, json, TimeSpan.FromHours(24)); // Auto-expire after 24h
     }
 }
 

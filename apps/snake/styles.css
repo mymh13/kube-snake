@@ -169,3 +169,16 @@ hr {
     opacity: 0.3;
     width: 100%;
 }
+
+/* Privacy notice */
+.privacy-notice {
+    margin-top: 20px;
+    padding: 10px;
+    background: rgba(78, 201, 176, 0.1);
+    border-left: 3px solid #4ec9b0;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #a0a0a0;
+    text-align: center;
+    max-width: 600px;
+}

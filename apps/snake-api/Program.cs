@@ -1,26 +1,37 @@
 using SnakeApi;
+using System.Collections.Concurrent;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add session support
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(24);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // GDPR: Mark as essential
+    options.Cookie.Name = ".SnakeGame.Session";
+});
 
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://kube-snake.mymh.dev")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials(); // Important for cookies!
     });
 });
 
 var app = builder.Build();
 
-// Use CORS
 app.UseCors("AllowAll");
-
+app.UseSession(); // Enable sessions
 app.UsePathBase("/snake-api");
 
-// Try to connect to Redis, but don't crash if it fails
+// Try to connect to Redis
 RedisGameStateStore? redisStore = null;
 try
 {
@@ -31,86 +42,75 @@ try
 catch (Exception ex)
 {
     Console.WriteLine($"⚠️ Redis not available, running without shared state: {ex.Message}");
-    redisStore = null;
 }
 
-// Create game state with optional Redis support
-var timer = new System.Timers.Timer(300); // 300ms = 3 FPS
-var gameState = new GameState(timer, redisStore);
+// Store game states per session
+var gameStates = new ConcurrentDictionary<string, GameState>();
 
-// Auto-move the snake on timer
-timer.Elapsed += (sender, e) =>
+// Helper to get or create game state for session
+GameState GetGameState(HttpContext context)
 {
-    if (gameState.IsGameStarted && !gameState.IsGameOver && !gameState.IsGamePaused)
+    // Get or create session ID
+    var sessionId = context.Session.GetString("SessionId");
+    if (string.IsNullOrEmpty(sessionId))
     {
-        gameState.Move(gameState.CurrentDirection);
+        sessionId = Guid.NewGuid().ToString();
+        context.Session.SetString("SessionId", sessionId);
     }
-};
-timer.Start();
 
-// SSE endpoint (keep for future, but not used now)
-app.MapGet("/game-stream", async (HttpContext context) =>
-{
-    context.Response.Headers["Content-Type"] = "text/event-stream";
-    context.Response.Headers["Cache-Control"] = "no-cache";
-    context.Response.Headers["Connection"] = "keep-alive";
-
-    while (!context.RequestAborted.IsCancellationRequested)
+    return gameStates.GetOrAdd(sessionId, _ =>
     {
-        var html = gameState.RenderHTML();
+        var timer = new System.Timers.Timer(300);
+        var state = new GameState(timer, redisStore, sessionId);
 
-        await context.Response.WriteAsync($"event: gameUpdate\n");
-        await context.Response.WriteAsync($"data: {html}\n\n");
-        await context.Response.Body.FlushAsync();
+        timer.Elapsed += (sender, e) =>
+        {
+            if (state.IsGameStarted && !state.IsGameOver && !state.IsGamePaused)
+            {
+                state.Move(state.CurrentDirection);
+            }
+        };
+        timer.Start();
 
-        await Task.Delay(200);
-    }
-});
+        return state;
+    });
+}
 
+// Endpoints
 app.MapGet("/render", (HttpContext context) =>
 {
-    // Disable caching
-    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
-    context.Response.Headers["Pragma"] = "no-cache";
-    context.Response.Headers["Expires"] = "0";
-
-    // Just render current state - don't move!
-    // The timer handles movement now
+    var gameState = GetGameState(context);
     return Results.Content(gameState.RenderHTML(), "text/html");
 });
 
-app.MapPost("/move", async (HttpRequest request) =>
+app.MapPost("/start", (HttpContext context) =>
 {
-    var form = await request.ReadFormAsync();
-    var direction = form["direction"].ToString();
-
-    gameState.ChangeDirection(direction);
-    return Results.Ok();
-});
-
-app.MapPost("/start", () =>
-{
+    var gameState = GetGameState(context);
     gameState.Start();
     return Results.Ok();
 });
 
-app.MapPost("/pause", () =>
+app.MapPost("/pause", (HttpContext context) =>
 {
-    gameState.TogglePause();
+    var gameState = GetGameState(context);
+    gameState.Pause();
     return Results.Ok();
 });
 
-app.MapPost("/reset", () =>
+app.MapPost("/reset", (HttpContext context) =>
 {
+    var gameState = GetGameState(context);
     gameState.Reset();
     return Results.Ok();
 });
 
-app.MapGet("/status", () =>
+app.MapPost("/move", (HttpContext context, MoveRequest request) =>
 {
-    return Results.Ok(new { started = gameState.IsGameStarted });
+    var gameState = GetGameState(context);
+    gameState.Move(request.Direction);
+    return Results.Ok();
 });
 
 app.Run();
 
-record MoveRequest(string Direction);
+public record MoveRequest(string Direction);

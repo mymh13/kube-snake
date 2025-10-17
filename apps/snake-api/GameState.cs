@@ -3,6 +3,7 @@ namespace SnakeApi;
 public class GameState
 {
     private readonly RedisGameStateStore? _redisStore;
+    private readonly string _sessionId;
     private List<(int X, int Y)> Snake = null!;  // Add = null! to fix warning
     private (int X, int Y) Food;
     private string Direction = null!;  // Add = null! to fix warning
@@ -14,10 +15,11 @@ public class GameState
     private const int Height = 20;
     private readonly System.Timers.Timer _timer;
 
-    public GameState(System.Timers.Timer timer, RedisGameStateStore? redisStore = null)
+    public GameState(System.Timers.Timer timer, RedisGameStateStore? redisStore, string sessionId)
     {
         _timer = timer;
         _redisStore = redisStore;
+        _sessionId = sessionId;
 
         // Try to load from Redis, otherwise initialize new game
         LoadFromRedis();
@@ -27,7 +29,7 @@ public class GameState
     {
         if (_redisStore != null)
         {
-            var data = _redisStore.GetGameState();
+            var data = _redisStore.GetGameState(_sessionId);
             if (data != null)
             {
                 Snake = data.Snake.Select(p => (p.X, p.Y)).ToList();
@@ -69,7 +71,7 @@ public class GameState
                 GameOver = GameOver,
                 GamePaused = GamePaused
             };
-            _redisStore.SaveGameState(data);
+            _redisStore.SaveGameState(_sessionId, data);
         }
     }
 

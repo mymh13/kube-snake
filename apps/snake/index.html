@@ -7,6 +7,7 @@
     <title>Kube-Snake</title>
     <link rel="stylesheet" href="/snake/styles.css">
     <link rel="icon" type="image/x-icon" href="/snake/favicon.ico">
+    <!-- NO session.js needed! C# handles it ✅ -->
 </head>
 
 <body>
@@ -14,14 +15,14 @@
         <h1>🐍 Kube-Snake</h1>
         <a href="/" class="back-link">← Back to Home</a>
 
-        <!-- Game controls (Start/Reset/Pause) -->
+        <!-- Game controls -->
         <div class="game-controls">
             <button hx-post="/snake-api/start" hx-swap="none" class="control-btn">START</button>
             <button hx-post="/snake-api/pause" hx-swap="none" class="control-btn">PAUSE</button>
             <button hx-post="/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
         </div>
 
-        <!-- Game canvas with polling -->
+        <!-- Game canvas -->
         <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 0.3s" hx-swap="innerHTML">
             Loading game...
         </div>
@@ -47,32 +48,34 @@
             </div>
         </div>
 
-        <!-- Keyboard listeners (invisible) -->
+        <!-- Keyboard listeners -->
         <div hx-post="/snake-api/move" hx-vals='{"direction":"up"}'
             hx-trigger="keydown[key=='ArrowUp'] from:body, keydown[key=='w'] from:body, keydown[key=='W'] from:body"
             hx-swap="none"></div>
-
         <div hx-post="/snake-api/move" hx-vals='{"direction":"down"}'
             hx-trigger="keydown[key=='ArrowDown'] from:body, keydown[key=='s'] from:body, keydown[key=='S'] from:body"
             hx-swap="none"></div>
-
         <div hx-post="/snake-api/move" hx-vals='{"direction":"left"}'
             hx-trigger="keydown[key=='ArrowLeft'] from:body, keydown[key=='a'] from:body, keydown[key=='A'] from:body"
             hx-swap="none"></div>
-
         <div hx-post="/snake-api/move" hx-vals='{"direction":"right"}'
             hx-trigger="keydown[key=='ArrowRight'] from:body, keydown[key=='d'] from:body, keydown[key=='D'] from:body"
             hx-swap="none"></div>
+
         <hr>
 
-        <!-- Guestbook embedded at bottom -->
+        <!-- Guestbook -->
         <h2>📝 Guestbook</h2>
         <div id="guestbook" hx-get="/guestbook/api/messages" hx-trigger="load" hx-swap="innerHTML">
             Loading guestbook...
         </div>
+
+        <!-- Privacy notice -->
+        <div class="privacy-notice">
+            ℹ️ This game uses a functional session cookie to save your game progress. No personal data is collected.
+        </div>
     </div>
 
-    <!-- HTMX only -->
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
 </body>
 
