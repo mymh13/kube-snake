@@ -57,8 +57,8 @@ public class GameState
         {
             var data = new GameStateData
             {
-                Snake = Snake.Select(p => new Position { X = p.X, Y = p.Y }).ToList(),
-                Food = new Position { X = Food.X, Y = Food.Y },
+                Snake = Snake.Select(p => new PositionData { X = p.X, Y = p.Y }).ToList(),
+                Food = new PositionData { X = Food.X, Y = Food.Y },
                 Direction = Direction,
                 Score = Score,
                 GameStarted = GameStarted,

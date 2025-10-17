@@ -30,8 +30,8 @@ public class RedisGameStateStore
 // Serializable game state
 public class GameStateData
 {
-    public List<Position> Snake { get; set; } = new();
-    public Position Food { get; set; } = new();
+    public List<PositionData> Snake { get; set; } = new();
+    public PositionData Food { get; set; } = new();
     public string Direction { get; set; } = "right";
     public int Score { get; set; }
     public bool GameStarted { get; set; }
@@ -39,7 +39,7 @@ public class GameStateData
     public bool GamePaused { get; set; }
 }
 
-public class Position
+public class PositionData
 {
     public int X { get; set; }
     public int Y { get; set; }
