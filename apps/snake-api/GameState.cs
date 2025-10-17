@@ -192,12 +192,40 @@ public class GameState
         foreach (var segment in Snake)
         {
             int index = segment.Y * Width + segment.X;
-            grid[index] = "<div style='width: 20px; height: 20px; background: #00ff00; border-radius: 2px;'></div>";
+            if (index >= 0 && index < grid.Length)
+            {
+                grid[index] = "<div style='width: 20px; height: 20px; background: #4ec9b0; border-radius: 2px;'></div>";
+            }
         }
 
         int foodIndex = Food.Y * Width + Food.X;
-        grid[foodIndex] = "<div style='width: 20px; height: 20px; background: #ff0000; border-radius: 2px;'></div>";
+        if (foodIndex >= 0 && foodIndex < grid.Length)
+        {
+            grid[foodIndex] = "<div style='width: 20px; height: 20px; background: #f5ab3cff; border-radius: 2px;'></div>";
+        }
 
-        return "<div style='display: grid; grid-template-columns: repeat(" + Width + ", 20px);'>" + string.Join("", grid) + "</div>";
+        var html = $@"
+        <div style='display: grid; grid-template-columns: repeat({Width}, 20px); gap: 1px; background: #1e1e1e; padding: 10px; border-radius: 8px;'>{string.Join("", grid)}</div>";
+
+        html += $"<p style='color: #4ec9b0; font-size: 1.5em; margin: 10px 0 5px 0;'>Score: {Score}</p>";
+
+        if (!GameStarted)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #4ec9b0; font-size: 1.2em;'>Press START to begin!</span></div>";
+        }
+        else if (GamePaused)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #ffa500; font-size: 1.5em;'>PAUSED</span></div>";
+        }
+        else if (GameOver)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #ff6b6b; font-size: 1.5em;'>GAME OVER!</span></div>";
+        }
+        else
+        {
+            html += "<div style='height: 2em;'></div>";
+        }
+
+        return html;
     }
 }
