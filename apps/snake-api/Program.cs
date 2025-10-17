@@ -20,11 +20,21 @@ app.UseCors("AllowAll");
 
 app.UsePathBase("/snake-api");
 
-// Get Redis connection string from environment variable
-var redisConnection = Environment.GetEnvironmentVariable("REDIS_CONNECTION") ?? "localhost:6379";
-var redisStore = new RedisGameStateStore(redisConnection);
+// Try to connect to Redis, but don't crash if it fails
+RedisGameStateStore? redisStore = null;
+try
+{
+    var redisConnection = Environment.GetEnvironmentVariable("REDIS_CONNECTION") ?? "localhost:6379";
+    redisStore = new RedisGameStateStore(redisConnection);
+    Console.WriteLine("✅ Connected to Redis successfully!");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"⚠️ Redis not available, running without shared state: {ex.Message}");
+    redisStore = null;
+}
 
-// Create game state with Redis support
+// Create game state with optional Redis support
 var timer = new System.Timers.Timer(300); // 300ms = 3 FPS
 var gameState = new GameState(timer, redisStore);
 
