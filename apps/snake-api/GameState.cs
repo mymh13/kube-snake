@@ -4,9 +4,9 @@ public class GameState
 {
     private readonly RedisGameStateStore? _redisStore;
     private readonly string _sessionId;
-    private List<(int X, int Y)> Snake = null!;  // Add = null! to fix warning
+    private List<(int X, int Y)> Snake = null!;
     private (int X, int Y) Food;
-    private string Direction = null!;  // Add = null! to fix warning
+    private string Direction = null!;
     private int Score;
     private bool GameStarted;
     private bool GameOver;
@@ -21,7 +21,6 @@ public class GameState
         _redisStore = redisStore;
         _sessionId = sessionId;
 
-        // Try to load from Redis, otherwise initialize new game
         LoadFromRedis();
     }
 
@@ -39,12 +38,10 @@ public class GameState
                 GameStarted = data.GameStarted;
                 GameOver = data.GameOver;
                 GamePaused = data.GamePaused;
-                return;  // Only update if we got data from Redis
+                return;
             }
         }
 
-        // Don't reinitialize if we already have a game in progress!
-        // Only initialize if Snake is empty (first load)
         if (Snake == null || Snake.Count == 0)
         {
             Snake = new List<(int X, int Y)> { (10, 10) };
@@ -75,19 +72,21 @@ public class GameState
         }
     }
 
-    // Expose current direction (read-only)
-    public string CurrentDirection => Direction;
-    public bool IsGameStarted => GameStarted;
-    public bool IsGameOver => GameOver;
-    public bool IsGamePaused => GamePaused;
-
     public void Start()
     {
-        if (!GameStarted)
+        if (!GameOver)
         {
             GameStarted = true;
-            GameOver = false;
             GamePaused = false;
+            SaveToRedis();
+        }
+    }
+
+    public void Pause()
+    {
+        if (GameStarted && !GameOver)
+        {
+            GamePaused = !GamePaused;
             SaveToRedis();
         }
     }
@@ -102,31 +101,6 @@ public class GameState
         GameOver = false;
         GamePaused = false;
         SaveToRedis();
-    }
-
-    public void TogglePause()
-    {
-        if (GameStarted && !GameOver)
-        {
-            GamePaused = !GamePaused;
-            SaveToRedis();
-        }
-    }
-
-    public void ChangeDirection(string newDirection)
-    {
-        if (GameOver || GamePaused) return;
-
-        bool isOpposite = (Direction == "up" && newDirection == "down") ||
-                          (Direction == "down" && newDirection == "up") ||
-                          (Direction == "left" && newDirection == "right") ||
-                          (Direction == "right" && newDirection == "left");
-
-        if (!isOpposite)
-        {
-            Direction = newDirection;
-            SaveToRedis();
-        }
     }
 
     public void Move(string direction)
@@ -162,6 +136,7 @@ public class GameState
             Snake.RemoveAt(Snake.Count - 1);
         }
 
+        Direction = direction;
         SaveToRedis();
     }
 
@@ -176,10 +151,13 @@ public class GameState
         return food;
     }
 
+    public bool IsGameStarted => GameStarted;
+    public bool IsGameOver => GameOver;
+    public bool IsGamePaused => GamePaused;
+    public string CurrentDirection => Direction;
+
     public string RenderHTML()
     {
-        // Only reload from Redis if we have Redis AND game is started
-        // This prevents overwriting local state when Redis is not available
         if (_redisStore != null && GameStarted)
         {
             LoadFromRedis();
@@ -231,3 +209,5 @@ public class GameState
         return html;
     }
 }
+
+public record Position(int X, int Y);
