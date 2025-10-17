@@ -2,18 +2,72 @@ namespace SnakeApi;
 
 public class GameState
 {
-    private const int GridSize = 20;
-    private const int MinInterval = 100; // Minimum speed (fastest)
-    private const int IntervalDecrement = 10; // Speed increase per food
-
-    private List<Position> Snake { get; set; } = new() { new Position(10, 10) };
-    private Position Food { get; set; } = new Position(15, 15);
-    private string Direction { get; set; } = "right";
-    private bool GameOver { get; set; } = false;
-    private bool GameStarted { get; set; } = false;
-    private bool GamePaused { get; set; } = false;
-    private int Score { get; set; } = 0;
+    private readonly RedisGameStateStore? _redisStore;
+    private List<(int X, int Y)> Snake;
+    private (int X, int Y) Food;
+    private string Direction;
+    private int Score;
+    private bool GameStarted;
+    private bool GameOver;
+    private bool GamePaused;
+    private const int Width = 20;
+    private const int Height = 20;
     private readonly System.Timers.Timer _timer;
+
+    public GameState(System.Timers.Timer timer, RedisGameStateStore? redisStore = null)
+    {
+        _timer = timer;
+        _redisStore = redisStore;
+
+        // Try to load from Redis, otherwise initialize new game
+        LoadFromRedis();
+    }
+
+    private void LoadFromRedis()
+    {
+        if (_redisStore != null)
+        {
+            var data = _redisStore.GetGameState();
+            if (data != null)
+            {
+                Snake = data.Snake.Select(p => (p.X, p.Y)).ToList();
+                Food = (data.Food.X, data.Food.Y);
+                Direction = data.Direction;
+                Score = data.Score;
+                GameStarted = data.GameStarted;
+                GameOver = data.GameOver;
+                GamePaused = data.GamePaused;
+                return;
+            }
+        }
+
+        // No Redis data, initialize new game
+        Snake = new List<(int X, int Y)> { (10, 10) };
+        Food = GenerateFood();
+        Direction = "right";
+        Score = 0;
+        GameStarted = false;
+        GameOver = false;
+        GamePaused = false;
+    }
+
+    private void SaveToRedis()
+    {
+        if (_redisStore != null)
+        {
+            var data = new GameStateData
+            {
+                Snake = Snake.Select(p => new Position { X = p.X, Y = p.Y }).ToList(),
+                Food = new Position { X = Food.X, Y = Food.Y },
+                Direction = Direction,
+                Score = Score,
+                GameStarted = GameStarted,
+                GameOver = GameOver,
+                GamePaused = GamePaused
+            };
+            _redisStore.SaveGameState(data);
+        }
+    }
 
     // Expose current direction (read-only)
     public string CurrentDirection => Direction;
@@ -21,151 +75,148 @@ public class GameState
     public bool IsGameOver => GameOver;
     public bool IsGamePaused => GamePaused;
 
-    public GameState(System.Timers.Timer timer)
-    {
-        _timer = timer;
-    }
-
-    // Start the game
     public void Start()
     {
-        if (!GameStarted && !GameOver)
+        if (!GameStarted)
         {
             GameStarted = true;
+            GameOver = false;
             GamePaused = false;
+            SaveToRedis();
         }
     }
 
-    // Toggle pause
+    public void Reset()
+    {
+        Snake = new List<(int X, int Y)> { (10, 10) };
+        Food = GenerateFood();
+        Direction = "right";
+        Score = 0;
+        GameStarted = false;
+        GameOver = false;
+        GamePaused = false;
+        SaveToRedis();
+    }
+
     public void TogglePause()
     {
         if (GameStarted && !GameOver)
         {
             GamePaused = !GamePaused;
+            SaveToRedis();
         }
     }
 
-    // Reset the game
-    public void Reset()
+    public void ChangeDirection(string newDirection)
     {
-        Snake = new() { new Position(10, 10) };
-        Food = new Position(15, 15);
-        Direction = "right";
-        GameOver = false;
-        GameStarted = false;
-        GamePaused = false;
-        Score = 0;
-        _timer.Interval = 300; // Reset speed
-    }
+        if (GameOver || GamePaused) return;
 
-    // Change direction (called by button press)
-    public void ChangeDirection(string direction)
-    {
-        if (!GameStarted || GameOver || GamePaused) return;
+        bool isOpposite = (Direction == "up" && newDirection == "down") ||
+                          (Direction == "down" && newDirection == "up") ||
+                          (Direction == "left" && newDirection == "right") ||
+                          (Direction == "right" && newDirection == "left");
 
-        // Prevent reversing
-        if (direction == "up" && Direction != "down") Direction = direction;
-        if (direction == "down" && Direction != "up") Direction = direction;
-        if (direction == "left" && Direction != "right") Direction = direction;
-        if (direction == "right" && Direction != "left") Direction = direction;
-    }
-
-    // Move snake (called by timer)
-    public void Move(string currentDirection)
-    {
-        if (!GameStarted || GameOver || GamePaused) return;
-
-        // Calculate new head position
-        var head = Snake[0];
-        var newHead = currentDirection switch
+        if (!isOpposite)
         {
-            "up" => new Position(head.X, head.Y - 1),
-            "down" => new Position(head.X, head.Y + 1),
-            "left" => new Position(head.X - 1, head.Y),
-            "right" => new Position(head.X + 1, head.Y),
+            Direction = newDirection;
+            SaveToRedis();
+        }
+    }
+
+    public void Move(string direction)
+    {
+        if (GameOver || !GameStarted || GamePaused) return;
+
+        var head = Snake[0];
+        var newHead = direction switch
+        {
+            "up" => (head.X, head.Y - 1),
+            "down" => (head.X, head.Y + 1),
+            "left" => (head.X - 1, head.Y),
+            "right" => (head.X + 1, head.Y),
             _ => head
         };
 
-        // Check collision with walls
-        if (newHead.X < 0 || newHead.X >= GridSize || newHead.Y < 0 || newHead.Y >= GridSize)
+        if (newHead.X < 0 || newHead.X >= Width || newHead.Y < 0 || newHead.Y >= Height || Snake.Contains(newHead))
         {
             GameOver = true;
+            SaveToRedis();
             return;
         }
 
-        // Check collision with self
-        if (Snake.Any(segment => segment.X == newHead.X && segment.Y == newHead.Y))
-        {
-            GameOver = true;
-            return;
-        }
-
-        // Move snake
         Snake.Insert(0, newHead);
 
-        // Check if food eaten
-        if (newHead.X == Food.X && newHead.Y == Food.Y)
+        if (newHead == Food)
         {
             Score++;
-            GenerateFood();
-
-            // Increase speed (decrease interval)
-            var newInterval = _timer.Interval - IntervalDecrement;
-            if (newInterval >= MinInterval)
-            {
-                _timer.Interval = newInterval;
-            }
+            Food = GenerateFood();
         }
         else
         {
-            Snake.RemoveAt(Snake.Count - 1); // Remove tail
+            Snake.RemoveAt(Snake.Count - 1);
         }
+
+        SaveToRedis();
     }
 
-    private void GenerateFood()
+    private (int X, int Y) GenerateFood()
     {
         var random = new Random();
-        Position newFood;
+        (int X, int Y) food;
         do
         {
-            newFood = new Position(random.Next(0, GridSize), random.Next(0, GridSize));
-        } while (Snake.Any(segment => segment.X == newFood.X && segment.Y == newFood.Y));
-
-        Food = newFood;
+            food = (random.Next(Width), random.Next(Height));
+        } while (Snake.Contains(food));
+        return food;
     }
 
     public string RenderHTML()
     {
-        var html = $@"
-        <div style='display: grid; grid-template-columns: repeat({GridSize}, 20px); gap: 1px; background: #1e1e1e; padding: 10px; border-radius: 8px;'>";
+        // Reload from Redis before rendering to get latest state
+        LoadFromRedis();
 
-        for (int y = 0; y < GridSize; y++)
+        var grid = new string[Width * Height];
+        for (int i = 0; i < grid.Length; i++)
         {
-            for (int x = 0; x < GridSize; x++)
+            grid[i] = "<div style='width: 20px; height: 20px; background: #2d2d2d; border-radius: 2px;'></div>";
+        }
+
+        foreach (var segment in Snake)
+        {
+            int index = segment.Y * Width + segment.X;
+            if (index >= 0 && index < grid.Length)
             {
-                var isSnakeHead = Snake[0].X == x && Snake[0].Y == y;
-                var isSnakeBody = Snake.Skip(1).Any(s => s.X == x && s.Y == y);
-                var isFood = Food.X == x && Food.Y == y;
-
-                var color = isSnakeHead ? "#4ec9b0" :
-                           isSnakeBody ? "#3aa18c" :
-                           isFood ? "#f5ab3cff" :
-                           "#2d2d2d";
-
-                html += $"<div style='width: 20px; height: 20px; background: {color}; border-radius: 2px;'></div>";
+                grid[index] = "<div style='width: 20px; height: 20px; background: #4ec9b0; border-radius: 2px;'></div>";
             }
         }
 
-        html += "</div>";
+        int foodIndex = Food.Y * Width + Food.X;
+        if (foodIndex >= 0 && foodIndex < grid.Length)
+        {
+            grid[foodIndex] = "<div style='width: 20px; height: 20px; background: #f5ab3cff; border-radius: 2px;'></div>";
+        }
+
+        var html = $@"
+        <div style='display: grid; grid-template-columns: repeat({Width}, 20px); gap: 1px; background: #1e1e1e; padding: 10px; border-radius: 8px;'>{string.Join("", grid)}</div>";
+
         html += $"<p style='color: #4ec9b0; font-size: 1.5em; margin: 10px 0 5px 0;'>Score: {Score}</p>";
 
-        // Fixed height status message container
-        var statusMessage = GameOver ? "<span style='color: #ff6b6b; font-size: 1.5em;'>GAME OVER!</span>" :
-                       GamePaused ? "<span style='color: #f5ab3cff; font-size: 1.5em;'>PAUSED</span>" :
-                       !GameStarted ? "<span style='color: #4ec9b0; font-size: 1.2em;'>Press START to begin!</span>" :
-                       "<span style='opacity: 0;'>-</span>"; // Invisible placeholder
-
-        html += $"<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'>{statusMessage}</div>";
+        if (!GameStarted)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #4ec9b0; font-size: 1.2em;'>Press START to begin!</span></div>";
+        }
+        else if (GamePaused)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #ffa500; font-size: 1.5em;'>PAUSED</span></div>";
+        }
+        else if (GameOver)
+        {
+            html += "<div style='height: 2em; display: flex; align-items: center; justify-content: center; margin: 0;'><span style='color: #ff6b6b; font-size: 1.5em;'>GAME OVER!</span></div>";
+        }
+        else
+        {
+            html += "<div style='height: 2em;'></div>";
+        }
 
         return html;
     }

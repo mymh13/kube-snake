@@ -20,9 +20,13 @@ app.UseCors("AllowAll");
 
 app.UsePathBase("/snake-api");
 
-// Create game state WITH slower auto-timer
+// Get Redis connection string from environment variable
+var redisConnection = Environment.GetEnvironmentVariable("REDIS_CONNECTION") ?? "localhost:6379";
+var redisStore = new RedisGameStateStore(redisConnection);
+
+// Create game state with Redis support
 var timer = new System.Timers.Timer(300); // 300ms = 3 FPS
-var gameState = new GameState(timer);
+var gameState = new GameState(timer, redisStore);
 
 // Auto-move the snake on timer
 timer.Elapsed += (sender, e) =>
