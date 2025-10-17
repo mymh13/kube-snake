@@ -2,7 +2,7 @@ replicaCount: 1  # Keep at 1 until Redis is deployed
 
 image:
   repository: ghcr.io/mymh13/kube-snake/snake-api
-  tag: "main-f81388a-20251017085126"
+  tag: "main-a1b5fb9-20251017091214"
   pullPolicy: Always
 
 service:
