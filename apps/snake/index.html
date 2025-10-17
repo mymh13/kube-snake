@@ -60,11 +60,9 @@
         <div hx-post="/snake-api/move" hx-vals='{"direction":"right"}'
             hx-trigger="keydown[key=='ArrowRight'] from:body, keydown[key=='d'] from:body, keydown[key=='D'] from:body"
             hx-swap="none"></div>
-
         <hr>
 
         <!-- Guestbook Section -->
-        <hr>
         <h2>📝 Guestbook</h2>
         <div id="guestbook-container">
             <div id="messages-list" hx-get="/guestbook/api/messages" hx-trigger="load, every 30s" hx-swap="innerHTML">
