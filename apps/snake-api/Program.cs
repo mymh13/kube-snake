@@ -49,8 +49,8 @@ app.MapGet("/game-stream", async (HttpContext context) =>
 
 app.MapGet("/render", () =>
 {
-    // Move the snake on each render call
-    if (gameState.IsRunning && !gameState.IsPaused)
+    // Move the snake on each render call (only if game is active and not paused/over)
+    if (gameState.IsGameStarted && !gameState.IsGameOver && !gameState.IsGamePaused)
     {
         gameState.Move(gameState.CurrentDirection);
     }

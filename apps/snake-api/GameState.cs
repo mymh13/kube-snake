@@ -18,6 +18,8 @@ public class GameState
     // Expose current direction (read-only)
     public string CurrentDirection => Direction;
     public bool IsGameStarted => GameStarted;
+    public bool IsGameOver => GameOver;
+    public bool IsGamePaused => GamePaused;
 
     public GameState(System.Timers.Timer timer)
     {
