@@ -21,9 +21,8 @@
             <button hx-post="/snake-api/reset" hx-swap="none" class="control-btn">RESET</button>
         </div>
 
-        <!-- Game canvas with SSE -->
-        <div id="game-container" hx-ext="sse" sse-connect="/snake-api/game-stream" sse-swap="gameUpdate"
-            hx-swap="innerHTML">
+        <!-- Game canvas with polling fallback -->
+        <div id="game-container" hx-get="/snake-api/render" hx-trigger="load, every 0.2s" hx-swap="innerHTML">
             Loading game...
         </div>
 
@@ -73,9 +72,8 @@
         </div>
     </div>
 
-    <!-- HTMX with SSE extension -->
+    <!-- HTMX only -->
     <script src="https://unpkg.com/htmx.org@2.0.7"></script>
-    <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
 </body>
 
 </html>
