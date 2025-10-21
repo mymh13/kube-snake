@@ -20,8 +20,8 @@ Kube-Snake                  # Project root
 │   └───workflows           # GitHub Actions CI/CD pipelines
 │
 ├───apps                    # Web applications
-│   ├───backend             # (Future: Snake game backend)
-│   ├───frontend            # (Future: Snake game frontend)
+│   ├───snake               # Snake game frontend
+│   ├───snake-api           # Snake game backend
 │   ├───guestbook           # .NET 9 Minimal API guestbook app
 │   │   ├───Endpoints       # API endpoints (Auth, Messages)
 │   │   ├───Extensions      # Service configuration extensions
